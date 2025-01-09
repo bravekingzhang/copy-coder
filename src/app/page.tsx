@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { useState, useCallback } from 'react'
 import { generatePromptAction } from './actions'
 import { Button } from '@/components/ui/button'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -224,10 +226,13 @@ export default function Home() {
                   )}
                 </Button>
               </div>
-              <div className="p-4 max-h-[400px] overflow-y-auto custom-scrollbar">
-                <pre className="text-sm text-gray-600 whitespace-pre-wrap font-mono">
+              <div className="p-4 max-h-[400px] overflow-y-auto custom-scrollbar prose prose-sm max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  className="text-gray-600"
+                >
                   {generatedPrompt}
-                </pre>
+                </ReactMarkdown>
               </div>
             </div>
           )}
