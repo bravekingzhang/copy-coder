@@ -304,7 +304,7 @@ const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
 })
 
-export async function generatePrompt(imagePath, applicationType) {
+export async function generatePrompt(imagePath, applicationType, temperature = 0.2) {
   const base64Image = await encodeImage(imagePath);
   const messages = [
     {
@@ -331,7 +331,7 @@ export async function generatePrompt(imagePath, applicationType) {
     const stream = await openai.chat.completions.create({
       model: "google/gemini-2.0-flash-thinking-exp:free",
       messages: messages,
-      temperature: 0.2,
+      temperature: temperature,
       stream: true,
     });
 

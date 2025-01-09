@@ -23,7 +23,7 @@ export default function RootLayout({
           {/* Top Header */}
           <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50">
             <div className="flex items-center justify-between h-full px-4">
-              <Link href="/" className="text-2xl font-bold">Copy Coder</Link>
+              <Link href="/" className="text-2xl font-bold">Super Copy Coder</Link>
               <div className="flex items-center space-x-4">
                 <button className="p-2 hover:bg-gray-100 rounded-lg">
                   <Search className="w-5 h-5" />

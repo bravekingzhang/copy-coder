@@ -16,6 +16,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [isCopied, setIsCopied] = useState(false)
   const [applicationType, setApplicationType] = useState('web')
+  const [temperature, setTemperature] = useState(0.2)
   const promptContainerRef = useRef<HTMLDivElement>(null)
 
   // Auto scroll to bottom when content updates
@@ -58,7 +59,7 @@ export default function Home() {
     try {
       setIsGenerating(true)
       setError(null)
-      const stream = await generatePromptAction(selectedImage, applicationType)
+      const stream = await generatePromptAction(selectedImage, applicationType, temperature)
 
       setGeneratedPrompt('')
 
@@ -73,7 +74,7 @@ export default function Home() {
     } finally {
       setIsGenerating(false)
     }
-  }, [selectedImage, applicationType])
+  }, [selectedImage, applicationType, temperature])
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -241,6 +242,29 @@ export default function Home() {
               <option value="mobile">Mobile applications</option>
               <option value="desktop">Desktop applications</option>
             </select>
+          </div>
+
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold">Temperature:</h3>
+              <span className="text-sm text-gray-500">{temperature}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Precise</span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={temperature}
+                onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:bg-blue-700"
+              />
+              <span className="text-sm text-gray-500">Creative</span>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">
+              Adjust temperature to control the creativity level of the generated prompts. Lower values produce more focused results, while higher values increase creativity and variability.
+            </p>
           </div>
 
           <Button
