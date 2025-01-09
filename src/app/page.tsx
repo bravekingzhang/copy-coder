@@ -47,12 +47,15 @@ export default function Home() {
     try {
       setIsGenerating(true)
       setError(null)
-      const result = await generatePromptAction(selectedImage, applicationType)
+      const stream = await generatePromptAction(selectedImage, applicationType)
 
-      if (result.success && result.prompt) {
-        setGeneratedPrompt(result.prompt)
-      } else {
-        setError(result.error || 'Failed to generate prompt')
+      setGeneratedPrompt('')
+
+      if (stream) {
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content || ''
+          setGeneratedPrompt(prev => prev + content)
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate prompt')

@@ -328,14 +328,16 @@ export async function generatePrompt(imagePath, applicationType) {
     }
   ];
   try {
-    const response = await openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       model: "google/gemini-2.0-flash-thinking-exp:free",
       messages: messages,
       temperature: 0.2,
+      stream: true,
     });
-    console.log(response);
-    return response.choices[0].message.content;
+
+    return stream;
   } catch (error) {
     console.error("Error calling Gemini API:", error);
+    throw error;
   }
 }

@@ -1,36 +1,23 @@
 'use server'
 
 import { generatePrompt } from '@/lib/gemini'
-import { writeFile, unlink } from 'fs/promises'
+import { writeFile } from 'fs/promises'
 import { join } from 'path'
-import { tmpdir } from 'os'
 import { v4 as uuidv4 } from 'uuid'
 
-export async function generatePromptAction(imageData: string, applicationType: string) {
+export async function generatePromptAction(base64Image: string, applicationType: string) {
   try {
-    // Convert base64 to file and save temporarily
-    const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '')
-    const buffer = Buffer.from(base64Data, 'base64')
+    // Save the base64 image to a temporary file
+    const imageBuffer = Buffer.from(base64Image.split(',')[1], 'base64')
+    const tempImagePath = join('/tmp', `${uuidv4()}.png`)
+    await writeFile(tempImagePath, imageBuffer)
 
-    // Create a temporary file path in system temp directory
-    const tempFileName = `${uuidv4()}.png`
-    const tempFilePath = join(tmpdir(), tempFileName)
+    // Generate prompt from the image
+    const stream = await generatePrompt(tempImagePath, applicationType)
+    return stream
 
-    // Save the file
-    await writeFile(tempFilePath, buffer)
-
-    // Generate prompt using Gemini
-    const prompt = await generatePrompt(tempFilePath, applicationType)
-
-    // Clean up the temporary file
-    await unlink(tempFilePath).catch(console.error)
-
-    return { success: true, prompt }
   } catch (error) {
-    console.error('Error generating prompt:', error)
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to generate prompt'
-    }
+    console.error('Error in generatePromptAction:', error)
+    throw error
   }
 }
