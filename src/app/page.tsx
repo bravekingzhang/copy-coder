@@ -1,9 +1,10 @@
 'use client'
 
-import { Upload, ChevronRight, X, Copy, Check } from 'lucide-react'
+import { Upload, Copy, Check } from 'lucide-react'
 import Image from 'next/image'
 import { useState, useCallback } from 'react'
 import { generatePromptAction } from './actions'
+import { Button } from '@/components/ui/button'
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -123,9 +124,12 @@ export default function Home() {
                     or UI mockups here
                   </p>
                   <p className="text-sm text-gray-400">or</p>
-                  <button className="mt-4 px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                  >
                     Choose image
-                  </button>
+                  </Button>
                 </div>
                 <input
                   id="file-upload"
@@ -140,12 +144,18 @@ export default function Home() {
               </div>
             ) : (
               <div className="relative">
-                <button
-                  onClick={removeImage}
-                  className="absolute -top-2 -right-2 z-10 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center z-20">
+                  <button
+                    onClick={removeImage}
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-red-500 hover:bg-red-600 text-white h-auto py-3 px-6 text-base font-medium"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x w-5 h-5">
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                    Remove Image
+                  </button>
+                </div>
                 <div className="relative w-full aspect-video">
                   <Image
                     src={selectedImage}
@@ -161,23 +171,26 @@ export default function Home() {
 
         {/* Info Section */}
         <div className="bg-white p-8 rounded-xl border border-gray-200">
-
           <div className="mt-8">
             <h3 className="text-lg font-semibold mb-4">Choose analysis focus:</h3>
-            <select className="w-full p-2 border border-gray-300 rounded-lg" value={applicationType} onChange={(e) => setApplicationType(e.target.value)}>
+            <select
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              value={applicationType}
+              onChange={(e) => setApplicationType(e.target.value)}
+            >
               <option value="web">Web applications</option>
               <option value="mobile">Mobile applications</option>
               <option value="desktop">Desktop applications</option>
             </select>
           </div>
 
-          <button
-            className="w-full mt-8 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          <Button
+            className="w-full mt-8"
             onClick={handleGeneratePrompt}
             disabled={!selectedImage || isGenerating}
           >
             {isGenerating ? 'Generating...' : 'Generate prompt'}
-          </button>
+          </Button>
 
           {error && (
             <p className="mt-4 text-sm text-red-500 text-center">
@@ -189,9 +202,11 @@ export default function Home() {
             <div className="mt-8 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <h4 className="font-semibold">Generated Prompt:</h4>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleCopyPrompt}
-                  className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="gap-2"
                 >
                   {isCopied ? (
                     <>
@@ -204,7 +219,7 @@ export default function Home() {
                       <span>Copy</span>
                     </>
                   )}
-                </button>
+                </Button>
               </div>
               <div className="p-4 max-h-[400px] overflow-y-auto custom-scrollbar">
                 <pre className="text-sm text-gray-600 whitespace-pre-wrap font-mono">
