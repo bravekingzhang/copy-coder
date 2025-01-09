@@ -46,15 +46,15 @@ export default function RootLayout({
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 {/* Left side - WeChat Official Account */}
                 <div className="text-center md:text-left">
-                  <h3 className="text-lg font-semibold mb-4">关注我的微信公众号</h3>
+                  <h3 className="text-lg font-semibold mb-4">Follow My WeChat Official Account</h3>
                   <div className="flex flex-col items-center md:items-start">
-                    <div className="text-xl font-bold text-gray-800 mb-2">老码小张</div>
+                    <div className="text-xl font-bold text-gray-800 mb-2">LaoMa XiaoZhang</div>
                     <p className="text-gray-600 mb-4">
-                      分享 AI 编程、全栈开发、效率工具等精彩内容
+                      Sharing insights on AI Programming, Full-Stack Development, and Productivity Tools
                     </p>
                     <Image
                       src="/wechat-qr.jpg"
-                      alt="微信公众号二维码"
+                      alt="WeChat Official Account QR Code"
                       width={200}
                       height={200}
                       className="rounded-lg shadow-md"
@@ -64,13 +64,14 @@ export default function RootLayout({
 
                 {/* Right side - Appreciation */}
                 <div className="text-center md:text-left">
-                  <h3 className="text-lg font-semibold mb-4">赞赏支持</h3>
+                  <h3 className="text-lg font-semibold mb-4">Support My Work</h3>
+                  <div className="text-xl font-bold text-gray-800 mb-2">LaoMa XiaoZhang</div>
                   <p className="text-gray-600 mb-4">
-                    如果这个工具对你有帮助，欢迎赞赏支持，让我能持续创作更多优质内容
+                    If you find this tool helpful, consider supporting me to create more valuable content
                   </p>
                   <Image
                     src="/reward-qr.jpg"
-                    alt="赞赏码"
+                    alt="Support QR Code"
                     width={200}
                     height={200}
                     className="rounded-lg shadow-md mx-auto md:mx-0"
@@ -79,7 +80,7 @@ export default function RootLayout({
               </div>
 
               <div className="text-center mt-8 text-gray-500 text-sm">
-                © 2025 Super Copy Coder. All rights reserved.
+                © 2024 Super Copy Coder. All rights reserved.
               </div>
             </div>
           </footer>
