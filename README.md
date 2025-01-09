@@ -2,6 +2,8 @@
 
 An AI-powered tool that generates detailed development prompts from UI designs and mockups. Perfect for developers using modern AI coding tools like Cursor, Bolt, and v0.dev.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyourusername%2Fsuper-copy-coder&env=GEMINI_API_KEY&envDescription=API%20key%20required%20for%20Gemini%20API%20access&envLink=https%3A%2F%2Fmakersuite.google.com%2Fapp%2Fapikey&demo-title=Super%20Copy%20Coder&demo-description=AI-powered%20prompt%20generator%20for%20developers&demo-url=https%3A%2F%2Fsuper-copy-coder.vercel.app)
+
 ## Preview
 
 ![Super Copy Coder Preview](./artificial/screen.jpg)
@@ -97,3 +99,25 @@ MIT License - feel free to use this project for your own purposes.
 ## Support
 
 If you find this tool helpful, consider supporting the project to help maintain and improve it.
+
+## Deployment
+
+### Deploy on Vercel (Recommended)
+
+The easiest way to deploy your own copy of Super Copy Coder is to use the Vercel Deploy Button above. This will:
+
+1. Clone this repository to your GitHub account
+2. Set up a new project on Vercel
+3. Prompt you to add the required environment variables
+4. Deploy the application automatically
+
+After deployment, you'll need to:
+1. Set up your `GEMINI_API_KEY` in the Vercel project settings
+2. Configure any additional environment variables if needed
+
+### Manual Deployment
+
+You can also deploy the application manually to any platform that supports Next.js applications. Make sure to:
+1. Set up the required environment variables
+2. Configure the build settings according to your platform
+3. Set up any necessary serverless functions support
