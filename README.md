@@ -2,6 +2,27 @@
 
 An AI-powered tool that generates detailed development prompts from UI designs and mockups. Perfect for developers using modern AI coding tools like Cursor, Bolt, and v0.dev.
 
+## Preview
+
+![Super Copy Coder Preview](./artificial/screen.jpg)
+
+### Key Capabilities:
+
+1. **Upload & Analysis**
+   - Drag & drop or click to upload UI designs
+   - Supports various image formats
+   - Real-time visual feedback
+
+2. **Smart Generation**
+   - Structured prompt generation
+   - Temperature control for creativity adjustment
+   - Real-time streaming output with Markdown formatting
+
+3. **Quick Integration**
+   - Direct access to Bolt, v0.dev, and Cursor
+   - One-click copy functionality
+   - Seamless workflow integration
+
 ## Features
 
 - **Image Analysis**: Upload UI designs, mockups, or application screenshots
