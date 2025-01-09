@@ -80,7 +80,7 @@ export default function RootLayout({
               </div>
 
               <div className="text-center mt-8 text-gray-500 text-sm">
-                © 2024 Super Copy Coder. All rights reserved.
+                © 2025 Super Copy Coder. All rights reserved.
               </div>
             </div>
           </footer>
