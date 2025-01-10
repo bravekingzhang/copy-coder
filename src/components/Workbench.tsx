@@ -31,32 +31,45 @@ const Workbench = () => {
     const buildFileTree = (paths: string[]): FileTreeNode[] => {
       const root: Record<string, FileTreeNode> = {}
 
+      // 首先创建所有目录节点
       paths.forEach(path => {
         const parts = path.split('/')
-        let current = root
         let currentPath = ''
 
+        // 创建路径上的所有目录节点
         parts.forEach((part, index) => {
           currentPath = currentPath ? `${currentPath}/${part}` : part
-          if (!current[part]) {
-            current[part] = {
+          const isLast = index === parts.length - 1
+
+          if (!root[currentPath]) {
+            root[currentPath] = {
               name: part,
               path: currentPath,
-              type: index === parts.length - 1 ? 'file' : 'directory',
-              children: index === parts.length - 1 ? undefined : [],
-              isExpanded: true
+              type: isLast ? 'file' : 'directory',
+              children: isLast ? undefined : [],
+              isExpanded: false
             }
-          }
-          if (current[part].children) {
-            current = current[part].children?.reduce((acc, node) => {
-              acc[node.name] = node
-              return acc
-            }, {} as Record<string, FileTreeNode>) || {}
           }
         })
       })
 
-      return Object.values(root)
+      // 构建树结构
+      Object.keys(root).forEach(path => {
+        const parts = path.split('/')
+        if (parts.length > 1) {
+          const parentPath = parts.slice(0, -1).join('/')
+          const parent = root[parentPath]
+          if (parent && parent.children) {
+            // 避免重复添加
+            if (!parent.children.find(child => child.path === path)) {
+              parent.children.push(root[path])
+            }
+          }
+        }
+      })
+
+      // 返回顶层节点
+      return Object.values(root).filter(node => !node.path.includes('/'))
     }
 
     setFileTree(buildFileTree(Object.keys(files)))
