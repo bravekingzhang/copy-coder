@@ -97,7 +97,26 @@ export default function Home() {
     if (!generatedPrompt) return
 
     try {
-      await navigator.clipboard.writeText(generatedPrompt)
+      // Try using the Clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(generatedPrompt)
+      } else {
+        // Fallback for browsers that don't support Clipboard API
+        const textArea = document.createElement('textarea')
+        textArea.value = generatedPrompt
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        textArea.style.top = '-999999px'
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        try {
+          document.execCommand('copy')
+        } catch (err) {
+          console.error('Fallback: Oops, unable to copy', err)
+        }
+        textArea.remove()
+      }
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
