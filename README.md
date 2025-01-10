@@ -104,7 +104,37 @@ If you find this tool helpful, consider supporting the project to help maintain 
 
 ## Deployment
 
-### Deploy on Vercel (Recommended)
+### Deploy with Docker (Recommended)
+
+1. Clone the repository and navigate to the project directory:
+```bash
+git clone https://github.com/bravekingzhang/copy-coder.git
+cd copy-coder
+```
+
+2. Create a `.env` file from the example:
+```bash
+cp .env.example .env
+```
+
+3. Edit the `.env` file and add your Gemini API key:
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+4. Build and start the application with Docker Compose:
+```bash
+docker-compose up -d
+```
+
+The application will be available at http://localhost:3000
+
+To stop the application:
+```bash
+docker-compose down
+```
+
+### Deploy on Vercel (Alternative)
 
 The easiest way to deploy your own copy of Super Copy Coder is to use the Vercel Deploy Button above. This will:
 
