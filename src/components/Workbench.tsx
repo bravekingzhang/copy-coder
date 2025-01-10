@@ -20,7 +20,6 @@ interface FileTreeNode {
 const TerminalWrapper = dynamic<TerminalWrapperProps>(() => import('./TerminalWrapper'), { ssr: false })
 
 const Workbench = () => {
-  const [terminal, setTerminal] = useState<Terminal | null>(null)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [fileTree, setFileTree] = useState<FileTreeNode[]>([])
   const [activeTab, setActiveTab] = useState<TabType>('code')
@@ -122,46 +121,44 @@ const Workbench = () => {
     )
   }
 
-  const handleTerminal = useCallback((term: Terminal) => {
-    setTerminal(term)
+  const handleTerminal = useCallback(async (term: Terminal) => {
+    if (!webcontainer || !isWebcontainerReady) return
 
-    // 设置终端输入输出
-    let currentLine = ''
-    term.onData(async (data: string) => {
-      // 处理特殊键
-      if (data === '\r') { // Enter
-        term.write('\r\n')
-        if (currentLine.trim()) {
-          try {
-            const shell = await webcontainer?.spawn('sh', ['-c', currentLine])
-            if (shell) {
-              shell.output.pipeTo(new WritableStream({
-                write(data) {
-                  term.write(data)
-                }
-              }))
-              await shell.exit
-            }
-          } catch (e) {
-            console.error('Failed to execute command:', e)
-            term.write('\r\nError executing command\r\n')
-          }
-        }
-        currentLine = ''
-        term.write('\r\n$ ')
-      } else if (data === '\u007f') { // Backspace
-        if (currentLine.length > 0) {
-          currentLine = currentLine.slice(0, -1)
-          term.write('\b \b')
-        }
-      } else {
-        currentLine += data
-        term.write(data)
-      }
-    })
+    try {
+      // 启动一个持久的 shell 会话
+      const shellProcess = await webcontainer.spawn('sh', {
+        terminal: {
+          cols: term.cols,
+          rows: term.rows,
+        },
+      })
 
-    term.write('$ ')
-  }, [webcontainer])
+      // 将终端输入发送到 shell
+      const writer = shellProcess.input.getWriter()
+      term.onData((data) => {
+        writer.write(data)
+      })
+
+      // 将 shell 输出写入终端
+      const writableStream = new WritableStream({
+        write(data) {
+          term.write(data)
+        },
+      })
+      shellProcess.output.pipeTo(writableStream)
+
+      // 处理终端大小变化
+      term.onResize(({ cols, rows }) => {
+        shellProcess.resize({
+          cols,
+          rows,
+        })
+      })
+    } catch (error) {
+      console.error('Failed to start shell:', error)
+      term.write('\r\nFailed to start shell\r\n')
+    }
+  }, [webcontainer, isWebcontainerReady])
 
   return (
     <div className="h-[600px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
@@ -236,13 +233,15 @@ const Workbench = () => {
         </div>
 
         {/* 终端 */}
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="border border-gray-200 rounded-lg overflow-hidden flex flex-col h-full">
           <div className="bg-gray-100 p-2 flex items-center gap-2">
             <TerminalIcon className="w-4 h-4" />
             <span className="text-sm font-medium">Terminal</span>
           </div>
           {isWebcontainerReady && (
-            <TerminalWrapper onTerminal={handleTerminal} />
+            <div className="flex-1 min-h-0">
+              <TerminalWrapper onTerminal={handleTerminal} />
+            </div>
           )}
         </div>
       </div>

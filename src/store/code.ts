@@ -84,10 +84,10 @@ export const useCodeStore = create<CodeState>((set, get) => ({
 
       const filePath = filePathMatch[1]
       // 提取文件内容
-      const contentMatch = actionText.match(/>[\s\S]*<\/boltAction>/)
+      const contentMatch = actionText.match(/>([^]*?)<\/boltAction>/)
       if (!contentMatch) return
 
-      const content = contentMatch[0].slice(1, -12).trim()
+      const content = contentMatch[1].trim()
 
       // 更新 store 并写入 WebContainer
       state.addFile(filePath, content)
@@ -104,11 +104,11 @@ export const useCodeStore = create<CodeState>((set, get) => ({
         actions: [...state.actions, { type: 'file', filePath, content }]
       }))
     } else if (type === 'shell') {
-      // 提取命令内容
-      const contentMatch = actionText.match(/>[\s\S]*<\/boltAction>/)
+      // 提取命令内容，使用更精确的正则表达式
+      const contentMatch = actionText.match(/>([^<]*)<\/boltAction>/)
       if (!contentMatch) return
 
-      const command = contentMatch[0].slice(1, -12).trim()
+      const command = contentMatch[1].trim()
 
       // 执行命令
       state.executeShellCommand(command)
