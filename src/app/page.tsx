@@ -7,6 +7,7 @@ import { generatePromptAction, generateCodeAction } from './actions'
 import { Button } from '@/components/ui/button'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useCopyToClipboard } from 'usehooks-ts'
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -16,9 +17,10 @@ export default function Home() {
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null)
   const [generatedCode, setGeneratedCode] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [isCopied, setIsCopied] = useState(false)
   const [applicationType, setApplicationType] = useState('web')
   const [temperature, setTemperature] = useState(0.2)
+  const [promptCopiedText, copyPromptToClipboard] = useCopyToClipboard()
+  const [codeCopiedText, copyCodeToClipboard] = useCopyToClipboard()
   const promptContainerRef = useRef<HTMLDivElement>(null)
   const codeContainerRef = useRef<HTMLDivElement>(null)
 
@@ -128,27 +130,13 @@ export default function Home() {
 
   const handleCopyPrompt = useCallback(async () => {
     if (!generatedPrompt) return
-
-    try {
-      await navigator.clipboard.writeText(generatedPrompt)
-      setIsCopied(true)
-      setTimeout(() => setIsCopied(false), 2000)
-    } catch (err) {
-      console.error('Failed to copy:', err)
-    }
-  }, [generatedPrompt])
+    await copyPromptToClipboard(generatedPrompt)
+  }, [generatedPrompt, copyPromptToClipboard])
 
   const handleCopyCode = useCallback(async () => {
     if (!generatedCode) return
-
-    try {
-      await navigator.clipboard.writeText(generatedCode)
-      setIsCopied(true)
-      setTimeout(() => setIsCopied(false), 2000)
-    } catch (err) {
-      console.error('Failed to copy:', err)
-    }
-  }, [generatedCode])
+    await copyCodeToClipboard(generatedCode)
+  }, [generatedCode, copyCodeToClipboard])
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -333,12 +321,12 @@ export default function Home() {
                     onClick={handleCopyPrompt}
                     className="gap-2"
                   >
-                    {isCopied ? (
+                    {promptCopiedText ? (
                       <Check className="h-4 w-4" />
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}
-                    {isCopied ? 'Copied!' : 'Copy'}
+                    {promptCopiedText ? 'Copied!' : 'Copy'}
                   </Button>
                 )}
               </div>
@@ -374,12 +362,12 @@ export default function Home() {
                     onClick={handleCopyCode}
                     className="gap-2"
                   >
-                    {isCopied ? (
+                    {codeCopiedText ? (
                       <Check className="h-4 w-4" />
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}
-                    {isCopied ? 'Copied!' : 'Copy'}
+                    {codeCopiedText ? 'Copied!' : 'Copy'}
                   </Button>
                 )}
               </div>
