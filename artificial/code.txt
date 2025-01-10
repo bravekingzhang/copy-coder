@@ -1,0 +1,583 @@
+<boltArtifact id="task-management-mobile-app" title="Task Management Mobile App - Add New Task Screen">
+  <boltAction type="file" filePath="package.json">
+    {
+      "name": "task-management-app",
+      "version": "0.1.0",
+      "private": true,
+      "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+      },
+      "dependencies": {
+        "@lucide/react": "^0.344.0",
+        "date-fns": "^3.3.1",
+        "next": "14.1.1",
+        "react": "^18",
+        "react-dom": "^18"
+      },
+      "devDependencies": {
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "autoprefixer": "^10.0.1",
+        "eslint": "^8",
+        "eslint-config-next": "14.1.1",
+        "postcss": "^8",
+        "tailwindcss": "^3.3.0",
+        "typescript": "^5"
+      }
+    }
+  </boltAction>
+  <boltAction type="shell">
+    npm install
+  </boltAction>
+  <boltAction type="file" filePath="next.config.js">
+    /** @type {import('next').NextConfig} */
+    const nextConfig = {
+      images: {
+        remotePatterns: [
+          {
+            protocol: 'https',
+            hostname: 'picsum.photos',
+            port: '',
+            pathname: '/seed/**',
+          },
+        ],
+      },
+    };
+
+    module.exports = nextConfig;
+  </boltAction>
+  <boltAction type="file" filePath="tailwind.config.ts">
+    import type { Config } from 'tailwindcss'
+
+    const config: Config = {
+      content: [
+        './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+      ],
+      theme: {
+        extend: {
+          colors: {
+            primary: '#007bff',
+            secondary: '#f0f0f0',
+            success: '#28a745',
+            text: '#343a40',
+          },
+        },
+      },
+      plugins: [],
+    }
+    export default config
+  </boltAction>
+  <boltAction type="file" filePath="src/styles/globals.css">
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    body {
+      font-family: sans-serif;
+    }
+  </boltAction>
+  <boltAction type="file" filePath="src/utils/date.ts">
+    import { format } from 'date-fns';
+
+    export const formatDate = (date: Date | null) => {
+      if (!date) return '';
+      return format(date, 'MM/dd/yyyy');
+    };
+  </boltAction>
+  <boltAction type="file" filePath="src/components/InputField.tsx">
+    'use client';
+
+    import React from 'react';
+
+    interface InputFieldProps {
+      label: string;
+      type?: string;
+      value: string;
+      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+      multiline?: boolean;
+    }
+
+    const InputField: React.FC<InputFieldProps> = ({
+      label,
+      type = 'text',
+      value,
+      onChange,
+      multiline = false,
+    }) => {
+      return (
+        <div className="mb-4">
+          <label className="block text-text text-sm font-bold mb-2">{label}</label>
+          {multiline ? (
+            <textarea
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-text leading-tight focus:outline-none focus:shadow-outline"
+              value={value}
+              onChange={onChange}
+            />
+          ) : (
+            <input
+              type={type}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-text leading-tight focus:outline-none focus:shadow-outline"
+              value={value}
+              onChange={onChange}
+            />
+          )}
+        </div>
+      );
+    };
+
+    export default InputField;
+  </boltAction>
+  <boltAction type="file" filePath="src/components/DatePicker.tsx">
+    'use client';
+
+    import React, { useState } from 'react';
+    import { formatDate } from '@/utils/date';
+
+    interface DatePickerProps {
+      label: string;
+      value: Date | null;
+      onChange: (date: Date | null) => void;
+    }
+
+    const DatePicker: React.FC<DatePickerProps> = ({ label, value, onChange }) => {
+      const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+      const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedDate = e.target.value ? new Date(e.target.value) : null;
+        onChange(selectedDate);
+        setIsPickerOpen(false);
+      };
+
+      return (
+        <div className="mb-4">
+          <label className="block text-text text-sm font-bold mb-2">{label}</label>
+          <div className="relative">
+            <input
+              type="text"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-text leading-tight focus:outline-none focus:shadow-outline cursor-pointer"
+              value={formatDate(value)}
+              readOnly
+              onClick={() => setIsPickerOpen(!isPickerOpen)}
+            />
+            {isPickerOpen && (
+              <div className="absolute z-10 bg-white border rounded shadow mt-1">
+                <input
+                  type="date"
+                  className="w-full p-2"
+                  onChange={handleDateChange}
+                  value={value ? value.toISOString().split('T')[0] : ''}
+                  onBlur={() => setIsPickerOpen(false)}
+                  autoFocus
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    export default DatePicker;
+  </boltAction>
+  <boltAction type="file" filePath="src/components/PriorityTabs.tsx">
+    'use client';
+
+    import React from 'react';
+
+    interface PriorityTabsProps {
+      priority: string;
+      onPriorityChange: (priority: string) => void;
+    }
+
+    const PriorityTabs: React.FC<PriorityTabsProps> = ({ priority, onPriorityChange }) => {
+      const priorities = ['High', 'Medium', 'Low'];
+
+      return (
+        <div className="mb-4 flex justify-center">
+          {priorities.map((p) => (
+            <button
+              key={p}
+              className={`px-4 py-2 rounded mr-2 ${
+                priority === p
+                  ? 'bg-primary text-white'
+                  : 'bg-secondary text-text'
+              }`}
+              onClick={() => onPriorityChange(p)}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      );
+    };
+
+    export default PriorityTabs;
+  </boltAction>
+  <boltAction type="file" filePath="src/components/UserAvatars.tsx">
+    'use client';
+
+    import React from 'react';
+    import Image from 'next/image';
+    import { Plus } from 'lucide-react';
+
+    interface UserAvatarsProps {
+      assignedUsers: string[];
+      onAddUser: () => void;
+    }
+
+    const UserAvatars: React.FC<UserAvatarsProps> = ({ assignedUsers, onAddUser }) => {
+      return (
+        <div className="mb-4 flex items-center">
+          {assignedUsers.map((user, index) => (
+            <Image
+              key={index}
+              src={`https://picsum.photos/seed/${user}/40/40`}
+              alt={`User ${index + 1}`}
+              width={40}
+              height={40}
+              className="rounded-full mr-2"
+            />
+          ))}
+          <button
+            onClick={onAddUser}
+            className="rounded-full bg-secondary p-1 text-text hover:bg-gray-300"
+          >
+            <Plus size={20} />
+          </button>
+        </div>
+      );
+    };
+
+    export default UserAvatars;
+  </boltAction>
+  <boltAction type="file" filePath="src/components/AttachmentInput.tsx">
+    'use client';
+
+    import React, { useState } from 'react';
+    import { Trash } from 'lucide-react';
+
+    interface AttachmentInputProps {
+      attachment: string | null;
+      onAttachmentChange: (attachment: string | null) => void;
+    }
+
+    const AttachmentInput: React.FC<AttachmentInputProps> = ({
+      attachment,
+      onAttachmentChange,
+    }) => {
+      const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          onAttachmentChange(file.name);
+        }
+      };
+
+      const handleRemoveAttachment = () => {
+        onAttachmentChange(null);
+      };
+
+      return (
+        <div className="mb-4">
+          <label className="block text-text text-sm font-bold mb-2">
+            Add Attachment
+          </label>
+          <div className="flex items-center">
+            <input
+              type="file"
+              className="hidden"
+              id="attachment-upload"
+              onChange={handleFileChange}
+            />
+            <label
+              htmlFor="attachment-upload"
+              className="bg-secondary text-text px-3 py-2 rounded cursor-pointer mr-2"
+            >
+              {attachment ? attachment : 'Choose File'}
+            </label>
+            {attachment && (
+              <button
+                onClick={handleRemoveAttachment}
+                className="text-text hover:text-red-500"
+              >
+                <Trash size={20} />
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    export default AttachmentInput;
+  </boltAction>
+  <boltAction type="file" filePath="src/components/TaskDetailsList.tsx">
+    'use client';
+
+    import React from 'react';
+    import { Trash } from 'lucide-react';
+
+    interface TaskDetailsListProps {
+      taskDetails: string[];
+      onTaskDetailAdd: () => void;
+      onTaskDetailRemove: (index: number) => void;
+    }
+
+    const TaskDetailsList: React.FC<TaskDetailsListProps> = ({
+      taskDetails,
+      onTaskDetailAdd,
+      onTaskDetailRemove,
+    }) => {
+      return (
+        <div className="mb-4">
+          <label className="block text-text text-sm font-bold mb-2">
+            Task Details
+          </label>
+          <ul>
+            {taskDetails.map((detail, index) => (
+              <li key={index} className="flex items-center mb-2">
+                <span className="flex-1">{detail}</span>
+                <button
+                  onClick={() => onTaskDetailRemove(index)}
+                  className="text-text hover:text-red-500"
+                >
+                  <Trash size={20} />
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={onTaskDetailAdd}
+            className="bg-secondary text-text px-3 py-2 rounded"
+          >
+            Add New
+          </button>
+        </div>
+      );
+    };
+
+    export default TaskDetailsList;
+  </boltAction>
+  <boltAction type="file" filePath="src/components/SuccessModal.tsx">
+    'use client';
+
+    import React from 'react';
+    import { CheckCircle } from 'lucide-react';
+
+    interface SuccessModalProps {
+      isOpen: boolean;
+      onClose: () => void;
+    }
+
+    const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) => {
+      if (!isOpen) return null;
+
+      return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded shadow-lg w-80">
+            <div className="flex justify-center mb-4">
+              <CheckCircle size={60} color="green" />
+            </div>
+            <h2 className="text-center text-lg font-bold mb-4">
+              Successfully created new task!
+            </h2>
+            <p className="text-center text-text mb-4">
+              You can now begin working on the newly added task.
+            </p>
+            <div className="flex justify-center">
+              <button
+                onClick={onClose}
+                className="bg-primary text-white px-4 py-2 rounded mr-2"
+              >
+                Check your schedule
+              </button>
+              <button
+                onClick={onClose}
+                className="bg-secondary text-text px-4 py-2 rounded"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    export default SuccessModal;
+  </boltAction>
+  <boltAction type="file" filePath="src/components/TaskForm.tsx">
+    'use client';
+
+    import React, { useState } from 'react';
+    import InputField from './InputField';
+    import DatePicker from './DatePicker';
+    import PriorityTabs from './PriorityTabs';
+    import UserAvatars from './UserAvatars';
+    import AttachmentInput from './AttachmentInput';
+    import TaskDetailsList from './TaskDetailsList';
+    import SuccessModal from './SuccessModal';
+    import { useRouter } from 'next/navigation';
+
+    const TaskForm: React.FC = () => {
+      const [taskName, setTaskName] = useState('');
+      const [description, setDescription] = useState('');
+      const [startDate, setStartDate] = useState<Date | null>(null);
+      const [dueDate, setDueDate] = useState<Date | null>(null);
+      const [priority, setPriority] = useState('High');
+      const [assignedUsers, setAssignedUsers] = useState(['1', '2', '3']);
+      const [attachment, setAttachment] = useState<string | null>(null);
+      const [taskDetails, setTaskDetails] = useState([
+        'A section that briefly highlights the brand\'s main offerings or key features',
+        'Start with a wireframe to map out the structure and layout before applying styling',
+        'Select fonts that match the brand\'s identity (e.g., use a modern sans-serif for the headings and a clean serif for the body)',
+      ]);
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const router = useRouter();
+
+      const handleAddTaskDetail = () => {
+        setTaskDetails([...taskDetails, 'New Task Detail']);
+      };
+
+      const handleRemoveTaskDetail = (index: number) => {
+        const updatedDetails = taskDetails.filter((_, i) => i !== index);
+        setTaskDetails(updatedDetails);
+      };
+
+      const handleAddUser = () => {
+        setAssignedUsers([...assignedUsers, String(Math.floor(Math.random() * 100))]);
+      };
+
+      const handleSubmit = () => {
+        setIsModalOpen(true);
+      };
+
+      const handleCloseModal = () => {
+        setIsModalOpen(false);
+        router.push('/');
+      };
+
+      return (
+        <div className="p-4">
+          <InputField
+            label="Task Name"
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+          />
+          <InputField
+            label="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            multiline
+          />
+          <div className="flex space-x-2">
+            <DatePicker label="Start Date" value={startDate} onChange={setStartDate} />
+            <DatePicker label="Due Date" value={dueDate} onChange={setDueDate} />
+          </div>
+          <PriorityTabs priority={priority} onPriorityChange={setPriority} />
+          <label className="block text-text text-sm font-bold mb-2">
+            Assign to
+          </label>
+          <UserAvatars assignedUsers={assignedUsers} onAddUser={handleAddUser} />
+          <AttachmentInput
+            attachment={attachment}
+            onAttachmentChange={setAttachment}
+          />
+          <TaskDetailsList
+            taskDetails={taskDetails}
+            onTaskDetailAdd={handleAddTaskDetail}
+            onTaskDetailRemove={handleRemoveTaskDetail}
+          />
+          <button
+            onClick={handleSubmit}
+            className="bg-primary text-white px-4 py-2 rounded w-full"
+          >
+            Submit
+          </button>
+          <SuccessModal isOpen={isModalOpen} onClose={handleCloseModal} />
+        </div>
+      );
+    };
+
+    export default TaskForm;
+  </boltAction>
+  <boltAction type="file" filePath="src/app/layout.tsx">
+    import type { Metadata } from 'next';
+    import { Inter } from 'next/font/google';
+    import './../styles/globals.css';
+    import { Share } from 'lucide-react';
+    import Link from 'next/link';
+
+    const inter = Inter({ subsets: ['latin'] });
+
+    export const metadata: Metadata = {
+      title: 'Task Management App',
+      description: 'Task Management Mobile App',
+    };
+
+    export default function RootLayout({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) {
+      return (
+        <html lang="en">
+          <body className={inter.className}>
+            <div className="flex flex-col h-screen">
+              <header className="bg-gray-100 p-4 flex justify-between items-center">
+                <h1 className="text-xl font-bold">Add new task</h1>
+                <Share size={24} />
+              </header>
+              <div className="flex-1 overflow-y-auto">
+                {children}
+              </div>
+              <footer className="bg-gray-100 p-4 text-center">
+                <Link href="/" className="text-blue-500">Back to Home</Link>
+              </footer>
+            </div>
+          </body>
+        </html>
+      );
+    }
+  </boltAction>
+  <boltAction type="file" filePath="src/app/page.tsx">
+    'use client';
+
+    import React from 'react';
+    import Link from 'next/link';
+
+    const Home: React.FC = () => {
+      return (
+        <div className="flex flex-col items-center justify-center h-full">
+          <h1 className="text-2xl font-bold mb-4">Welcome to Task Management App</h1>
+          <p className="text-text mb-8">Click the button below to add a new task.</p>
+          <Link href="/add-task" className="bg-primary text-white px-6 py-3 rounded hover:bg-blue-600">
+            Add New Task
+          </Link>
+        </div>
+      );
+    };
+
+    export default Home;
+  </boltAction>
+  <boltAction type="file" filePath="src/app/add-task/page.tsx">
+    'use client';
+
+    import React from 'react';
+    import TaskForm from '@/components/TaskForm';
+
+    const AddTaskPage: React.FC = () => {
+      return (
+        <div className="flex justify-center">
+          <div className="w-full max-w-md">
+            <TaskForm />
+          </div>
+        </div>
+      );
+    };
+
+    export default AddTaskPage;
+  </boltAction>
+</boltArtifact>

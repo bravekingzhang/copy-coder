@@ -3,7 +3,7 @@
 import { Upload, Copy, Check } from 'lucide-react'
 import Image from 'next/image'
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { generatePromptAction } from './actions'
+import { generatePromptAction, generateCodeAction } from './actions'
 import { Button } from '@/components/ui/button'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -12,12 +12,15 @@ export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isGeneratingCode, setIsGeneratingCode] = useState(false)
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null)
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isCopied, setIsCopied] = useState(false)
   const [applicationType, setApplicationType] = useState('web')
   const [temperature, setTemperature] = useState(0.2)
   const promptContainerRef = useRef<HTMLDivElement>(null)
+  const codeContainerRef = useRef<HTMLDivElement>(null)
 
   // Auto scroll to bottom when content updates
   useEffect(() => {
@@ -25,6 +28,12 @@ export default function Home() {
       promptContainerRef.current.scrollTop = promptContainerRef.current.scrollHeight
     }
   }, [generatedPrompt])
+
+  useEffect(() => {
+    if (codeContainerRef.current) {
+      codeContainerRef.current.scrollTop = codeContainerRef.current.scrollHeight
+    }
+  }, [generatedCode])
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -76,6 +85,29 @@ export default function Home() {
     }
   }, [selectedImage, applicationType, temperature])
 
+  const handleGenerateCode = useCallback(async () => {
+    if (!selectedImage || !generatedPrompt) return
+
+    try {
+      setIsGeneratingCode(true)
+      setError(null)
+      const stream = await generateCodeAction(selectedImage, generatedPrompt, temperature)
+
+      setGeneratedCode('')
+
+      if (stream) {
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content || ''
+          setGeneratedCode(prev => prev + content)
+        }
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate code')
+    } finally {
+      setIsGeneratingCode(false)
+    }
+  }, [selectedImage, generatedPrompt, temperature])
+
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -90,6 +122,7 @@ export default function Home() {
   const removeImage = useCallback(() => {
     setSelectedImage(null)
     setGeneratedPrompt(null)
+    setGeneratedCode(null)
     setError(null)
   }, [])
 
@@ -97,32 +130,25 @@ export default function Home() {
     if (!generatedPrompt) return
 
     try {
-      // Try using the Clipboard API first
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(generatedPrompt)
-      } else {
-        // Fallback for browsers that don't support Clipboard API
-        const textArea = document.createElement('textarea')
-        textArea.value = generatedPrompt
-        textArea.style.position = 'fixed'
-        textArea.style.left = '-999999px'
-        textArea.style.top = '-999999px'
-        document.body.appendChild(textArea)
-        textArea.focus()
-        textArea.select()
-        try {
-          document.execCommand('copy')
-        } catch (err) {
-          console.error('Fallback: Oops, unable to copy', err)
-        }
-        textArea.remove()
-      }
+      await navigator.clipboard.writeText(generatedPrompt)
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
       console.error('Failed to copy:', err)
     }
   }, [generatedPrompt])
+
+  const handleCopyCode = useCallback(async () => {
+    if (!generatedCode) return
+
+    try {
+      await navigator.clipboard.writeText(generatedCode)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }, [generatedCode])
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -138,8 +164,9 @@ export default function Home() {
 
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-2 gap-8">
-        {/* Upload Section */}
+        {/* Left Column */}
         <div>
+          {/* Upload Section */}
           <div className="bg-white p-8 rounded-xl border border-gray-200">
             <div className="text-center">
               {!selectedImage ? (
@@ -204,6 +231,45 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Settings Section */}
+          <div className="mt-8 bg-white p-8 rounded-xl border border-gray-200">
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-4">Choose analysis focus:</h3>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                value={applicationType}
+                onChange={(e) => setApplicationType(e.target.value)}
+              >
+                <option value="web">Web applications</option>
+                <option value="mobile">Mobile applications</option>
+                <option value="desktop">Desktop applications</option>
+              </select>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold">Temperature:</h3>
+                <span className="text-sm text-gray-500">{temperature}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">Precise</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={temperature}
+                  onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:bg-blue-700"
+                />
+                <span className="text-sm text-gray-500">Creative</span>
+              </div>
+              <p className="mt-2 text-xs text-gray-500">
+                Adjust temperature to control the creativity level of the generated content. Lower values produce more focused results, while higher values increase creativity and variability.
+              </p>
+            </div>
+          </div>
+
           {/* Tools Section */}
           <div className="mt-8 bg-white p-8 rounded-xl border border-gray-200">
             <h3 className="font-semibold mb-4">Quick Access Tools:</h3>
@@ -248,91 +314,89 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Info Section */}
-        <div className="bg-white p-8 rounded-xl border border-gray-200">
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4">Choose analysis focus:</h3>
-            <select
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              value={applicationType}
-              onChange={(e) => setApplicationType(e.target.value)}
-            >
-              <option value="web">Web applications</option>
-              <option value="mobile">Mobile applications</option>
-              <option value="desktop">Desktop applications</option>
-            </select>
-          </div>
-
-          <div className="mt-8">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold">Temperature:</h3>
-              <span className="text-sm text-gray-500">{temperature}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Precise</span>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={temperature}
-                onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:bg-blue-700"
-              />
-              <span className="text-sm text-gray-500">Creative</span>
-            </div>
-            <p className="mt-2 text-xs text-gray-500">
-              Adjust temperature to control the creativity level of the generated prompts. Lower values produce more focused results, while higher values increase creativity and variability.
-            </p>
-          </div>
-
-          <Button
-            className="w-full mt-8"
-            onClick={handleGeneratePrompt}
-            disabled={!selectedImage || isGenerating}
-          >
-            {isGenerating ? 'Generating...' : 'Generate prompt'}
-          </Button>
-
-          {error && (
-            <p className="mt-4 text-sm text-red-500 text-center">
-              {error}
-            </p>
-          )}
-
-          {generatedPrompt && (
-            <div className="mt-8 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                <h4 className="font-semibold">Generated Prompt:</h4>
+        {/* Right Column */}
+        <div className="space-y-8">
+          {/* Prompt Section */}
+          <div className="bg-white p-8 rounded-xl border border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold">Generated Prompt:</h3>
+              <div className="space-x-2">
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCopyPrompt}
-                  className="gap-2"
+                  onClick={handleGeneratePrompt}
+                  disabled={!selectedImage || isGenerating}
                 >
-                  {isCopied ? (
-                    <>
-                      <Check className="w-4 h-4 text-green-500" />
-                      <span className="text-green-500">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4" />
-                      <span>Copy</span>
-                    </>
-                  )}
+                  {isGenerating ? 'Generating...' : 'Generate Prompt'}
                 </Button>
-              </div>
-              <div ref={promptContainerRef} className="p-4 max-h-[400px] overflow-y-auto custom-scrollbar prose prose-sm max-w-none">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  className="text-gray-600"
-                >
-                  {generatedPrompt}
-                </ReactMarkdown>
+                {generatedPrompt && (
+                  <Button
+                    variant="outline"
+                    onClick={handleCopyPrompt}
+                    className="gap-2"
+                  >
+                    {isCopied ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                    {isCopied ? 'Copied!' : 'Copy'}
+                  </Button>
+                )}
               </div>
             </div>
-          )}
+            <div
+              ref={promptContainerRef}
+              className="bg-gray-50 rounded-lg p-4 h-[200px] overflow-y-auto"
+            >
+              {error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {generatedPrompt || '*Prompt will appear here*'}
+                </ReactMarkdown>
+              )}
+            </div>
+          </div>
+
+          {/* Code Section */}
+          <div className="bg-white p-8 rounded-xl border border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold">Generated Code:</h3>
+              <div className="space-x-2">
+                <Button
+                  onClick={handleGenerateCode}
+                  disabled={!generatedPrompt || isGeneratingCode}
+                >
+                  {isGeneratingCode ? 'Generating...' : 'Generate Code'}
+                </Button>
+                {generatedCode && (
+                  <Button
+                    variant="outline"
+                    onClick={handleCopyCode}
+                    className="gap-2"
+                  >
+                    {isCopied ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                    {isCopied ? 'Copied!' : 'Copy'}
+                  </Button>
+                )}
+              </div>
+            </div>
+            <div
+              ref={codeContainerRef}
+              className="bg-gray-50 rounded-lg p-4 h-[400px] overflow-y-auto"
+            >
+              {error ? (
+                <p className="text-red-500">{error}</p>
+              ) : (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {generatedCode || '*Code will appear here*'}
+                </ReactMarkdown>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
