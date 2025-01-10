@@ -42,7 +42,7 @@ export async function generatePrompt(base64Image, applicationType, temperature =
   }
 }
 
-export async function generateCode(prompt, temperature = 0.2) {
+export async function generateCode(base64Image, prompt, temperature = 0.2) {
   const messages = [
     {
       "role": "system",
@@ -50,7 +50,18 @@ export async function generateCode(prompt, temperature = 0.2) {
     },
     {
       "role": "user",
-      "content": prompt
+      "content": [
+        {
+          "type": "text",
+          "text": `Please generate this application based on the image and prompt: ${prompt}`,
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": `data:image/jpeg;base64,${base64Image}`
+          },
+        },
+      ],
     }
   ];
 
