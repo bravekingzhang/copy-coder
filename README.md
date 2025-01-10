@@ -124,14 +124,14 @@ GEMINI_API_KEY=your_api_key_here
 
 4. Build and start the application with Docker Compose:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 The application will be available at http://localhost:3000
 
 To stop the application:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Deploy on Vercel (Alternative)

@@ -105,7 +105,37 @@ MIT 许可证 - 可以自由使用此项目用于个人用途。
 
 ## 部署
 
-### 使用 Vercel 部署（推荐）
+### 使用 Docker 部署（推荐）
+
+1. 克隆仓库并进入项目目录：
+```bash
+git clone https://github.com/bravekingzhang/copy-coder.git
+cd copy-coder
+```
+
+2. 从示例文件创建 `.env` 文件：
+```bash
+cp .env.example .env
+```
+
+3. 编辑 `.env` 文件，添加你的 Gemini API 密钥：
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+4. 使用 Docker Compose 构建并启动应用：
+```bash
+docker compose up -d
+```
+
+应用将在 http://localhost:3000 上运行
+
+停止应用：
+```bash
+docker compose down
+```
+
+### 使用 Vercel 部署（备选方案）
 
 部署你自己的 Super Copy Coder 副本最简单的方法是使用上方的 Vercel 部署按钮。这将会：
 
@@ -123,7 +153,7 @@ MIT 许可证 - 可以自由使用此项目用于个人用途。
 你也可以手动将应用部署到任何支持 Next.js 应用的平台。确保：
 1. 设置所需的环境变量
 2. 根据平台配置构建设置
-3. 设置必要的 serverless 函数支持 
+3. 设置必要的 serverless 函数支持
 
 ## 关注我的微信公众号
 
