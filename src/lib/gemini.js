@@ -28,35 +28,109 @@ the prompt should contain the following parts:
 
 ### response_prefix
 
-this part is a prefix of the response, you should follow the following content, most of time do not need to change it.
+you should away use the content blew ,most of time do not need to change it.
 
 ${RESPONSE_PREFIX}
 
 ### summary_title
 
-which is a title of the page, you should analyze the image, comprehend the page function, and then generate a title for the page.
+This section should provide a clear, descriptive title for the page based on image analysis. For example:
+
+- For a dashboard: "Modern Analytics Dashboard with Data Visualization"
+- For an e-commerce page: "E-commerce Product Listing with Advanced Filters"
+- For a social app: "Social Media Feed with Interactive Features"
+
+The title should:
+1. Reflect the main purpose/function of the page
+2. Include key distinguishing features
+3. Be concise but descriptive
+4. Match the overall design language
 
 ### image_analysis
 
-you should analyze the image, and then generate a detailed analysis of the image. and you should follow the following content:
+you should analyze the image and generate a detailed analysis that includes:
 
-1. Navigation Elements: which elements are in the navigation bar, and what are their functions
-2. Layout Components: which elements are in the layout, and what are their functions
-3. Content Sections: which elements are in the content, and what are their functions
-4. Interactive Controls: which elements are in the interactive controls, and what are their functions
-5. Colors: which colors are in the page, and what are their functions
-6. Grid/Layout Structure: which layout is in the page, and what are their functions
+1. Navigation Elements:
+   - Identify and describe all navigation components (headers, menus, sidebars)
+   - Document their placement and organization
+   - Note any navigation patterns or hierarchies
+
+2. Layout Components:
+   - Break down major layout sections and containers
+   - Describe the purpose and function of each layout component
+   - Explain how components are arranged and interact
+
+3. Content Sections:
+   - List and describe all content areas
+   - Explain the purpose of each content section
+   - Note content hierarchy and relationships
+
+4. Interactive Controls:
+   - Document all interactive elements (buttons, forms, etc.)
+   - Describe their functionality and behavior
+   - Note any state changes or animations
+
+5. Colors:
+   - List the color palette used
+   - Explain color usage and purpose
+   - Note any color patterns or themes
+   - Include specific hex codes
+
+6. Grid/Layout Structure:
+   - Describe the overall grid system
+   - Document responsive behavior
+   - Note spacing and alignment patterns
+   - Explain layout organization principles
 
 ### development_planning
 
-this is the last part of the prompt, you should give a detailed plan of the development, and you should follow the following content:
+this is the last part of the prompt, you should analyze the development plan based on the image analysis, including:
 
-1. Project Structure: which structure is in the page, and what are their functions
-2. Key Features: which features are in the page, and what are their functions
-3. State Management: which state is in the page, and what are their functions
-4. Routes: which routes are in the page, and what are their functions
-5. Component Architecture: which component architecture is in the page, and what are their functions
-6. Responsive Breakpoints: which responsive breakpoints are in the page, and what are their functions
+1. Project Structure:
+- Describe the recommended folder organization:
+  ├── components (reusable UI components)
+  ├── pages (page-level components)
+  ├── services (API and business logic)
+  ├── styles (CSS/styling files)
+  └── utils (helper functions)
+
+2. Key Features:
+- List main functionality like:
+  - Navigation system
+  - Image upload capability
+  - Form handling
+  - Interactive elements
+  - Responsive layouts
+
+3. State Management:
+- Document state requirements:
+  - User authentication state
+  - Form input states
+  - UI states (loading, errors)
+  - Navigation state
+  - Theme/styling states
+
+4. Routes:
+- Define routing structure:
+  - Main pages (/home, /about, etc)
+  - Authentication routes
+  - Dynamic routes
+  - Route guards/protection
+
+5. Component Architecture:
+- Break down component hierarchy:
+  - Layout components
+  - Navigation components
+  - Form components
+  - UI components
+  - Page components
+
+6. Responsive Breakpoints:
+- Specify breakpoint definitions:
+  - Mobile: < 768px
+  - Tablet: 768px - 1024px
+  - Desktop: > 1024px
+  - Layout adjustments per breakpoint
 
 ## few-shot examples:
 
@@ -317,7 +391,7 @@ export async function generatePrompt(base64Image, applicationType, temperature =
   ];
   try {
     const stream = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-thinking-exp:free",
+      model: "google/gemini-2.0-flash-exp:free",
       messages: messages,
       temperature: temperature,
       stream: true,
