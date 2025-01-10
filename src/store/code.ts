@@ -18,18 +18,25 @@ interface CodeState {
   files: Record<string, string>
   webcontainer: WebContainer | null
   isWebcontainerReady: boolean
+  serverUrl: string | null
   actions: BoltAction[]
   addFile: (path: string, content: string) => void
   executeShellCommand: (command: string) => Promise<void>
   initWebContainer: () => Promise<void>
   parseBoltAction: (action: string) => void
+  setServerUrl: (url: string) => void
 }
 
 export const useCodeStore = create<CodeState>((set, get) => ({
   files: {},
   webcontainer: null,
   isWebcontainerReady: false,
+  serverUrl: null,
   actions: [],
+
+  setServerUrl: (url: string) => {
+    set({ serverUrl: url })
+  },
 
   addFile: (path: string, content: string) => {
     set((state) => ({
@@ -52,6 +59,12 @@ export const useCodeStore = create<CodeState>((set, get) => ({
   initWebContainer: async () => {
     if (!get().webcontainer) {
       const container = await WebContainer.boot()
+
+      // 监听服务启动事件
+      container.on('server-ready', (port, url) => {
+        get().setServerUrl(url)
+      })
+
       set({ webcontainer: container, isWebcontainerReady: true })
     }
   },
@@ -79,6 +92,11 @@ export const useCodeStore = create<CodeState>((set, get) => ({
       // 更新 store 并写入 WebContainer
       state.addFile(filePath, content)
       if (state.webcontainer && state.isWebcontainerReady) {
+        // 确保目录存在
+        const dirPath = filePath.split('/').slice(0, -1).join('/')
+        if (dirPath) {
+          state.webcontainer.fs.mkdir(dirPath, { recursive: true })
+        }
         state.webcontainer.fs.writeFile(filePath, content)
       }
 

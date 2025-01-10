@@ -1,16 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import type { Terminal } from 'xterm'
 import { useCodeStore } from '@/store/code'
-import { Folder, File, Terminal as TerminalIcon, Globe } from 'lucide-react'
+import { Folder, File, Terminal as TerminalIcon, Code, Globe } from 'lucide-react'
 import type { TerminalWrapperProps } from './TerminalWrapper'
+
+type TabType = 'code' | 'preview'
 
 interface FileTreeNode {
   name: string
   type: 'file' | 'directory'
+  path: string
   children?: FileTreeNode[]
+  isExpanded?: boolean
 }
 
 const TerminalWrapper = dynamic<TerminalWrapperProps>(() => import('./TerminalWrapper'), { ssr: false })
@@ -19,10 +23,93 @@ const Workbench = () => {
   const [terminal, setTerminal] = useState<Terminal | null>(null)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [fileTree, setFileTree] = useState<FileTreeNode[]>([])
-  const [previewUrl, setPreviewUrl] = useState<string>('')
-  const { webcontainer, files, isWebcontainerReady } = useCodeStore()
+  const [activeTab, setActiveTab] = useState<TabType>('code')
+  const { webcontainer, files, isWebcontainerReady, serverUrl } = useCodeStore()
 
-  const handleTerminal = (term: Terminal) => {
+  // 构建文件树
+  useEffect(() => {
+    const buildFileTree = (paths: string[]): FileTreeNode[] => {
+      const root: Record<string, FileTreeNode> = {}
+
+      paths.forEach(path => {
+        const parts = path.split('/')
+        let current = root
+        let currentPath = ''
+
+        parts.forEach((part, index) => {
+          currentPath = currentPath ? `${currentPath}/${part}` : part
+          if (!current[part]) {
+            current[part] = {
+              name: part,
+              path: currentPath,
+              type: index === parts.length - 1 ? 'file' : 'directory',
+              children: index === parts.length - 1 ? undefined : [],
+              isExpanded: true
+            }
+          }
+          if (current[part].children) {
+            current = current[part].children?.reduce((acc, node) => {
+              acc[node.name] = node
+              return acc
+            }, {} as Record<string, FileTreeNode>) || {}
+          }
+        })
+      })
+
+      return Object.values(root)
+    }
+
+    setFileTree(buildFileTree(Object.keys(files)))
+  }, [files])
+
+  const toggleDirectory = (node: FileTreeNode) => {
+    const updateNode = (nodes: FileTreeNode[]): FileTreeNode[] => {
+      return nodes.map(n => {
+        if (n.path === node.path) {
+          return { ...n, isExpanded: !n.isExpanded }
+        }
+        if (n.children) {
+          return { ...n, children: updateNode(n.children) }
+        }
+        return n
+      })
+    }
+    setFileTree(updateNode(fileTree))
+  }
+
+  // 渲染文件树
+  const renderFileTree = (nodes: FileTreeNode[]) => {
+    return (
+      <ul className="pl-4">
+        {nodes.map((node) => (
+          <li key={node.path} className="py-1">
+            <div
+              className={`flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded ${
+                selectedFile === node.path ? 'bg-blue-100' : ''
+              }`}
+              onClick={() => {
+                if (node.type === 'directory') {
+                  toggleDirectory(node)
+                } else {
+                  setSelectedFile(node.path)
+                }
+              }}
+            >
+              {node.type === 'directory' ? (
+                <Folder className="w-4 h-4" />
+              ) : (
+                <File className="w-4 h-4" />
+              )}
+              <span>{node.name}</span>
+            </div>
+            {node.children && node.isExpanded && renderFileTree(node.children)}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  const handleTerminal = useCallback((term: Terminal) => {
     setTerminal(term)
 
     // 设置终端输入输出
@@ -61,100 +148,7 @@ const Workbench = () => {
     })
 
     term.write('$ ')
-
-    // 检查是否有 HTTP 服务启动
-    const checkServer = async () => {
-      try {
-        const response = await fetch('http://localhost:3000')
-        if (response.ok) {
-          setPreviewUrl('http://localhost:3000')
-        }
-      } catch {
-        // 服务未启动，忽略错误
-      }
-    }
-    checkServer()
-  }
-
-  // 监听窗口大小变化，调整终端大小
-  useEffect(() => {
-    const handleResize = async () => {
-      if (terminal) {
-        const { FitAddon } = await import('@xterm/addon-fit')
-        const fitAddon = new FitAddon()
-        terminal.loadAddon(fitAddon)
-        fitAddon.fit()
-      }
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [terminal])
-
-  // 构建文件树
-  useEffect(() => {
-    const buildFileTree = (paths: string[]): FileTreeNode[] => {
-      const root: Record<string, FileTreeNode> = {}
-
-      paths.forEach(path => {
-        const parts = path.split('/')
-        let current = root
-
-        parts.forEach((part, index) => {
-          if (!current[part]) {
-            current[part] = {
-              name: part,
-              type: index === parts.length - 1 ? 'file' : 'directory',
-              children: index === parts.length - 1 ? undefined : []
-            }
-          }
-          if (current[part].children) {
-            current = current[part].children?.reduce((acc, node) => {
-              acc[node.name] = node
-              return acc
-            }, {} as Record<string, FileTreeNode>) || {}
-          }
-        })
-      })
-
-      return Object.values(root)
-    }
-
-    setFileTree(buildFileTree(Object.keys(files)))
-  }, [files])
-
-  // 渲染文件树
-  const renderFileTree = (nodes: FileTreeNode[], basePath = '') => {
-    return (
-      <ul className="pl-4">
-        {nodes.map((node) => {
-          const path = `${basePath}${node.name}`
-          return (
-            <li key={path} className="py-1">
-              <div
-                className={`flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded ${
-                  selectedFile === path ? 'bg-blue-100' : ''
-                }`}
-                onClick={() => {
-                  if (node.type === 'file') {
-                    setSelectedFile(path)
-                  }
-                }}
-              >
-                {node.type === 'directory' ? (
-                  <Folder className="w-4 h-4" />
-                ) : (
-                  <File className="w-4 h-4" />
-                )}
-                <span>{node.name}</span>
-              </div>
-              {node.children && renderFileTree(node.children, `${path}/`)}
-            </li>
-          )
-        })}
-      </ul>
-    )
-  }
+  }, [webcontainer])
 
   return (
     <div className="h-[600px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
@@ -169,27 +163,60 @@ const Workbench = () => {
 
       {/* 主内容区域 */}
       <div className="col-span-9 grid grid-rows-2 gap-4">
-        {/* 预览窗口 */}
+        {/* 文件内容/预览 */}
         <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <div className="bg-gray-100 p-2 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">Preview</span>
+          <div className="bg-gray-100 p-2">
+            <div className="flex border-b">
+              <button
+                className={`px-4 py-2 flex items-center gap-2 ${
+                  activeTab === 'code'
+                    ? 'border-b-2 border-blue-500 text-blue-500'
+                    : 'text-gray-500'
+                }`}
+                onClick={() => setActiveTab('code')}
+              >
+                <Code className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  {selectedFile || 'Editor'}
+                </span>
+              </button>
+              <button
+                className={`px-4 py-2 flex items-center gap-2 ${
+                  activeTab === 'preview'
+                    ? 'border-b-2 border-blue-500 text-blue-500'
+                    : 'text-gray-500'
+                }`}
+                onClick={() => setActiveTab('preview')}
+              >
+                <Globe className="w-4 h-4" />
+                <span className="text-sm font-medium">Preview</span>
+              </button>
             </div>
-            {previewUrl && (
-              <span className="text-sm text-gray-500">{previewUrl}</span>
-            )}
           </div>
           <div className="h-full">
-            {previewUrl ? (
-              <iframe
-                src={previewUrl}
-                className="w-full h-full border-0"
-                sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-              />
+            {activeTab === 'code' ? (
+              <div className="h-full p-4 font-mono text-sm overflow-auto bg-gray-50">
+                {selectedFile && files[selectedFile] ? (
+                  <pre>{files[selectedFile]}</pre>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-400">
+                    Select a file to view its contents
+                  </div>
+                )}
+              </div>
             ) : (
-              <div className="flex items-center justify-center h-full text-gray-400">
-                Preview will appear here when the server starts
+              <div className="h-full">
+                {serverUrl ? (
+                  <iframe
+                    src={serverUrl}
+                    className="w-full h-full border-0"
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-400">
+                    Preview will appear here when the server starts
+                  </div>
+                )}
               </div>
             )}
           </div>
