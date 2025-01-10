@@ -257,49 +257,6 @@ export default function Home() {
               </p>
             </div>
           </div>
-
-          {/* Tools Section */}
-          <div className="mt-8 bg-white p-8 rounded-xl border border-gray-200">
-            <h3 className="font-semibold mb-4">Quick Access Tools:</h3>
-            <div className="grid grid-cols-1 gap-3">
-              <a
-                href="https://bolt.new"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                <span className="mr-2">⚡</span>
-                <div>
-                  <div className="font-medium">Bolt</div>
-                  <div className="text-sm text-gray-300">Build full-stack web apps</div>
-                </div>
-              </a>
-              <a
-                href="https://v0.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
-              >
-                <span className="mr-2">🚀</span>
-                <div>
-                  <div className="font-medium">v0.dev</div>
-                  <div className="text-sm text-violet-200">Design and build UI visually</div>
-                </div>
-              </a>
-              <a
-                href="https://cursor.sh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <span className="mr-2">💻</span>
-                <div>
-                  <div className="font-medium">Cursor</div>
-                  <div className="text-sm text-blue-200">AI-powered code editor</div>
-                </div>
-              </a>
-            </div>
-          </div>
         </div>
 
         {/* Right Column */}
