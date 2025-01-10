@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useCopyToClipboard } from 'usehooks-ts'
 import { useCodeStore } from '@/store/code'
+import Workbench from '@/components/Workbench'
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -102,22 +103,22 @@ export default function Home() {
       if (stream) {
         for await (const chunk of stream) {
           const content = chunk.choices[0]?.delta?.content || ''
-          
+
           // 累积内容
           currentAction += content
-          
+
           // 检查是否包含完整的 boltAction
           if (currentAction.includes('<boltAction') && currentAction.includes('</boltAction>')) {
             const actionMatch = currentAction.match(/<boltAction[\s\S]*?<\/boltAction>/)
             if (actionMatch && actionMatch.index !== undefined) {
               const action = actionMatch[0]
               useCodeStore.getState().parseBoltAction(action)
-              
+
               // 清除已处理的 action
               currentAction = currentAction.slice(actionMatch.index + action.length)
             }
           }
-          
+
           setGeneratedCode(prev => prev + content)
         }
       }
@@ -367,6 +368,13 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Workbench */}
+      {generatedCode && (
+        <div className="mt-8">
+          <Workbench />
+        </div>
+      )}
     </div>
   )
 }
