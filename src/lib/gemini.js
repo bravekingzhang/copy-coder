@@ -1,5 +1,4 @@
 import OpenAI from 'openai'
-import fs from 'fs/promises';
 
 const RESPONSE_PREFIX = `Create detailed components with these requirements:
 1. Use 'use client' directive for client-side components
@@ -289,23 +288,12 @@ Responsive Design Adjustments:
 </development_planning>
 `
 
-async function encodeImage(imagePath) {
-  try {
-    const imageBuffer = await fs.readFile(imagePath);
-    return imageBuffer.toString('base64');
-  } catch (error) {
-    console.error("Error encoding image:", error);
-    return null;
-  }
-}
-
 const openai = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
   baseURL: 'https://openrouter.ai/api/v1',
 })
 
-export async function generatePrompt(imagePath, applicationType, temperature = 0.2) {
-  const base64Image = await encodeImage(imagePath);
+export async function generatePrompt(base64Image, applicationType, temperature = 0.2) {
   const messages = [
     {
       "role": "system",
