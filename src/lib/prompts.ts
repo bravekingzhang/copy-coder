@@ -5,9 +5,9 @@ import { stripIndents } from './utils';
  * 图片分析系统提示词
  * @returns
  */
-export const getSystemAnalysisPrompt = () => {
+export const getSystemAnalysisPrompt = (applicationType: string) => {
 
-  const RESPONSE_PREFIX = `Create detailed components with these requirements:
+  const RESPONSE_PREFIX_FULL_STACK = `Use Next.js framework, Create detailed components with these requirements:
 1. Use 'use client' directive for client-side components
 2. Style with Tailwind CSS utility classes for responsive design
 3. Use Lucide React for icons (from lucide-react package). Do NOT use other UI libraries unless requested
@@ -24,6 +24,21 @@ export const getSystemAnalysisPrompt = () => {
    - You MUST complete the entire prompt before stopping
 `
 
+const RESPONSE_PREFIX_FRONTEND = `Use React framework, Create detailed components with these requirements:
+1. Style with Tailwind CSS utility classes for responsive design
+2. Use Lucide React for icons (from lucide-react package). Do NOT use other UI libraries unless requested
+3. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
+4. Create root layout.tsx page that wraps necessary navigation items to all pages
+5. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header
+6. Accurately implement necessary grid layouts
+7. Follow proper import practices:
+   - Use @/ path aliases
+   - Keep component imports organized
+   - Don't forget root route (page.tsx) handling
+   - You MUST complete the entire prompt before stopping
+`
+
+
 return  `you are an expert frontend developer, you are given a image, and you need to analyze the image, and then generate a prompt for a frontend developer to implement the image.
 
 the prompt should contain the following parts:
@@ -35,13 +50,13 @@ the prompt should contain the following parts:
 
 ### response_prefix
 
-you should away use the content blew ,most of time do not need to change it.
+for this part, you should away use the content blew ,most of time do not need to change it.
 
-${RESPONSE_PREFIX}
+${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
 
 ### summary_title
 
-This section should provide a clear, descriptive title for the page based on image analysis. For example:
+for this part, you should provide a clear, descriptive title for the page based on image analysis. For example:
 
 - For a dashboard: "Modern Analytics Dashboard with Data Visualization"
 - For an e-commerce page: "E-commerce Product Listing with Advanced Filters"
@@ -55,7 +70,7 @@ The title should:
 
 ### image_analysis
 
-you should analyze the image and generate a detailed analysis that includes:
+for this part, you should analyze the image and generate a detailed analysis that includes:
 
 1. Navigation Elements:
    - Identify and describe all navigation components (headers, menus, sidebars)
@@ -143,7 +158,7 @@ for this part, you should analyze the development plan based on the image analys
 
 ### example of analysis a picture of a mobile application:
 
-${RESPONSE_PREFIX}
+${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
 
 <summary_title>
 Mobile web application landing page
@@ -233,7 +248,7 @@ Mobile web application landing page
 
 ### example of analysis a picture of a web application:
 
-${RESPONSE_PREFIX}
+${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
 
 <summary_title>
 Web Interface Analysis for UI/UX Design

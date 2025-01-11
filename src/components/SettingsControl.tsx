@@ -19,15 +19,14 @@ const SettingsControl = ({
     <div className="mt-8 bg-white p-8 rounded-xl border border-gray-200">
       {/* Application Type Select */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-4">Choose analysis focus:</h3>
+        <h3 className="text-lg font-semibold mb-4">Choose technology stack:</h3>
         <Select value={applicationType} onValueChange={onApplicationTypeChange}>
           <SelectTrigger>
-            <SelectValue placeholder="Select application type" />
+            <SelectValue placeholder="Select technology stack" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="web">Web applications</SelectItem>
-            <SelectItem value="mobile">Mobile applications</SelectItem>
-            <SelectItem value="desktop">Desktop applications</SelectItem>
+            <SelectItem value="full-stack">Full Stack</SelectItem>
+            <SelectItem value="frontend">Absolute Frontend</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -52,7 +51,7 @@ const SettingsControl = ({
           <span className="text-sm text-gray-500">Creative</span>
         </div>
         <p className="mt-2 text-xs text-gray-500">
-          Adjust temperature to control the creativity level of the generated content. 
+          Adjust temperature to control the creativity level of the generated content.
           Lower values produce more focused results, while higher values increase creativity and variability.
         </p>
       </div>
@@ -60,4 +59,4 @@ const SettingsControl = ({
   );
 };
 
-export default SettingsControl; 
+export default SettingsControl;

@@ -19,7 +19,7 @@ export default function Home() {
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
-  const [applicationType, setApplicationType] = useState("web");
+  const [applicationType, setApplicationType] = useState("frontend");
   const [temperature, setTemperature] = useState(0.2);
   const [promptCopiedText, copyPromptToClipboard] = useCopyToClipboard();
   const promptContainerRef = useRef<HTMLDivElement>(null);

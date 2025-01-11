@@ -9,7 +9,7 @@ export async function generatePrompt(base64Image, applicationType, temperature =
   const messages = [
     {
       "role": "system",
-      "content": getSystemAnalysisPrompt()
+      "content": getSystemAnalysisPrompt(applicationType)
     },
     {
       "role": "user",
