@@ -228,9 +228,7 @@ export default function Home() {
 
         {/* Right Column */}
         {generatedCode && (
-          <div className="mt-8">
             <Workbench />
-          </div>
         )}
       </div>
     </div>
