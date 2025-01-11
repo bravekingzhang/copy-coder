@@ -19,6 +19,11 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 import Preview from './Preview';
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { html } from '@codemirror/lang-html';
+import { css } from '@codemirror/lang-css';
+import { oneDark } from '@codemirror/theme-one-dark';
 
 type TabType = "code" | "preview";
 
@@ -189,6 +194,24 @@ const Workbench = () => {
     [webcontainer, isWebcontainerReady]
   );
 
+  // 添加文件扩展名到语言的映射函数
+  const getLanguageExtension = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    switch (ext) {
+      case 'js':
+      case 'jsx':
+      case 'ts':
+      case 'tsx':
+        return javascript({ jsx: true, typescript: true });
+      case 'html':
+        return html();
+      case 'css':
+        return css();
+      default:
+        return javascript();
+    }
+  };
+
   return (
     <div className="h-[600px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
       {/* 文件浏览器 */}
@@ -234,9 +257,38 @@ const Workbench = () => {
               <ResizablePanelGroup direction="vertical">
                 {/* 代码编辑器 */}
                 <ResizablePanel defaultSize={66}>
-                  <div className="h-full p-4 font-mono text-sm overflow-auto bg-gray-50">
+                  <div className="h-full bg-gray-50">
                     {selectedFile && files[selectedFile] ? (
-                      <pre>{files[selectedFile]}</pre>
+                      <CodeMirror
+                        value={files[selectedFile]}
+                        height="100%"
+                        theme={oneDark}
+                        extensions={[getLanguageExtension(selectedFile)]}
+                        basicSetup={{
+                          lineNumbers: true,
+                          highlightActiveLineGutter: true,
+                          highlightSpecialChars: true,
+                          foldGutter: true,
+                          drawSelection: true,
+                          dropCursor: true,
+                          allowMultipleSelections: true,
+                          indentOnInput: true,
+                          bracketMatching: true,
+                          closeBrackets: true,
+                          autocompletion: true,
+                          rectangularSelection: true,
+                          crosshairCursor: true,
+                          highlightActiveLine: true,
+                          highlightSelectionMatches: true,
+                          closeBracketsKeymap: true,
+                          defaultKeymap: true,
+                          searchKeymap: true,
+                          historyKeymap: true,
+                          foldKeymap: true,
+                          completionKeymap: true,
+                          lintKeymap: true,
+                        }}
+                      />
                     ) : (
                       <div className="flex items-center justify-center h-full text-gray-400">
                         Select a file to view its contents
