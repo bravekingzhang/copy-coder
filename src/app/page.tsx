@@ -12,6 +12,7 @@ import Workbench from "@/components/Workbench";
 import SettingsControl from "@/components/SettingsControl";
 import ImageUploader from "@/components/ImageUploader";
 import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -153,14 +154,21 @@ export default function Home() {
         <p className="text-xl text-gray-600 mb-8">
           Built for the next generation of AI coders. Upload images of full
           applications, UI mockups, or custom designs and use our generated
-          prompts to build your apps faster.
+          prompts to build your apps faster. and preview
         </p>
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-2 gap-8">
+      <motion.div
+        className="relative"
+        layout
+      >
         {/* Left Column */}
-        <div>
+        <motion.div
+          layout
+          className={`${generatedCode ? 'w-1/3' : 'max-w-3xl'}`}
+          transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
+        >
           {/* Upload Section */}
           <ImageUploader
             selectedImage={selectedImage}
@@ -224,13 +232,23 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Column */}
-        {generatedCode && (
-            <Workbench />
-        )}
-      </div>
+        <AnimatePresence>
+          {generatedCode && (
+            <motion.div
+              className="absolute top-0 right-0 w-2/3 pl-8"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Workbench />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }
