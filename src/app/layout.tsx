@@ -4,6 +4,7 @@ import "./globals.css";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -85,6 +86,7 @@ export default function RootLayout({
             </div>
           </footer>
         </div>
+        <Toaster />
       </body>
     </html>
   );

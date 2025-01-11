@@ -1,7 +1,6 @@
 "use client";
 
-import { Upload, Copy, Check } from "lucide-react";
-import Image from "next/image";
+import { Copy, Check } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { generatePromptAction, generateCodeAction } from "./actions";
 import { Button } from "@/components/ui/button";
@@ -11,15 +10,15 @@ import { useCopyToClipboard } from "usehooks-ts";
 import { useCodeStore } from "@/store/code";
 import Workbench from "@/components/Workbench";
 import SettingsControl from "@/components/SettingsControl";
+import ImageUploader from "@/components/ImageUploader";
+import { toast } from "sonner"
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [applicationType, setApplicationType] = useState("web");
   const [temperature, setTemperature] = useState(0.2);
   const [promptCopiedText, copyPromptToClipboard] = useCopyToClipboard();
@@ -33,40 +32,11 @@ export default function Home() {
     }
   }, [generatedPrompt]);
 
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  }, []);
-
   const handleGeneratePrompt = useCallback(async () => {
     if (!selectedImage) return;
 
     try {
       setIsGenerating(true);
-      setError(null);
       const stream = await generatePromptAction(
         selectedImage,
         applicationType,
@@ -82,9 +52,16 @@ export default function Home() {
         }
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to generate prompt"
-      );
+      const errorMessage = err instanceof Error ? err.message : "Failed to generate prompt";
+      toast.error(errorMessage, {
+        description: "Please try again later",
+        action: {
+          label: "Try Again",
+          onClick: () => {
+            handleGeneratePrompt();
+          },
+        },
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -95,7 +72,6 @@ export default function Home() {
 
     try {
       setIsGeneratingCode(true);
-      setError(null);
       const stream = await generateCodeAction(
         selectedImage,
         generatedPrompt,
@@ -135,31 +111,26 @@ export default function Home() {
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate code");
+      const errorMessage = err instanceof Error ? err.message : "Failed to generate code";
+      toast.error(errorMessage, {
+        description: "Please try again later",
+        action: {
+          label: "Try Again",
+          onClick: () => {
+            handleGenerateCode();
+          },
+        },
+      });
     } finally {
       setIsGeneratingCode(false);
     }
   }, [selectedImage, generatedPrompt, temperature]);
 
-  const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setSelectedImage(e.target?.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-    },
-    []
-  );
 
   const removeImage = useCallback(() => {
     setSelectedImage(null);
     setGeneratedPrompt(null);
     setGeneratedCode(null);
-    setError(null);
   }, []);
 
   const handleCopyPrompt = useCallback(async () => {
@@ -191,83 +162,11 @@ export default function Home() {
         {/* Left Column */}
         <div>
           {/* Upload Section */}
-          <div className="bg-white p-8 rounded-xl border border-gray-200">
-            <div className="text-center">
-              {!selectedImage ? (
-                <div
-                  className={`relative border-2 ${
-                    isDragging
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-300"
-                  } border-dashed rounded-lg p-12 cursor-pointer hover:border-blue-500 transition-colors`}
-                  onClick={() =>
-                    document.getElementById("file-upload")?.click()
-                  }
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                >
-                  <div className="flex flex-col items-center">
-                    <Upload className="h-12 w-12 text-gray-400 mb-4" />
-                    <p className="text-sm text-gray-600 mb-2">
-                      Drag & drop images of websites, Figma designs,
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      or UI mockups here
-                    </p>
-                    <p className="text-sm text-gray-400">or</p>
-                    <Button variant="outline" className="mt-4">
-                      Choose image
-                    </Button>
-                  </div>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  <p className="mt-4 text-xs text-gray-400">
-                    Note: Only one image can be uploaded at a time.
-                  </p>
-                </div>
-              ) : (
-                <div className="relative">
-                  <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center z-20">
-                    <button
-                      onClick={removeImage}
-                      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-red-500 hover:bg-red-600 text-white h-auto py-3 px-6 text-base font-medium"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="lucide lucide-x w-5 h-5"
-                      >
-                        <path d="M18 6 6 18" />
-                        <path d="m6 6 12 12" />
-                      </svg>
-                      Remove Image
-                    </button>
-                  </div>
-                  <div className="relative w-full aspect-video">
-                    <Image
-                      src={selectedImage}
-                      alt="Uploaded design"
-                      fill
-                      className="rounded-lg object-contain"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          <ImageUploader
+            selectedImage={selectedImage}
+            onImageSelect={setSelectedImage}
+            onImageRemove={removeImage}
+          />
 
           {/* Settings Section */}
           <SettingsControl
@@ -309,13 +208,9 @@ export default function Home() {
                 ref={promptContainerRef}
                 className="bg-gray-50 rounded-lg p-4 h-[200px] overflow-y-auto"
               >
-                {error ? (
-                  <p className="text-red-500">{error}</p>
-                ) : (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {generatedPrompt || "*Prompt will appear here*"}
-                  </ReactMarkdown>
-                )}
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {generatedPrompt || "*Prompt will appear here*"}
+                </ReactMarkdown>
               </div>
               {/* 生成代码按钮 */}
               <div className="w-full justify-end">
