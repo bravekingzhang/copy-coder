@@ -9,7 +9,7 @@ import remarkGfm from "remark-gfm";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useCodeStore } from "@/store/code";
 import Workbench from "@/components/Workbench";
-import SettingsControl from "@/components/SettingsControl";
+import CollapsibleSettings from "@/components/CollapsibleSettings";
 import ImageUploader from "@/components/ImageUploader";
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion";
@@ -177,7 +177,7 @@ export default function Home() {
           />
 
           {/* Settings Section */}
-          <SettingsControl
+          <CollapsibleSettings
             applicationType={applicationType}
             temperature={temperature}
             onApplicationTypeChange={setApplicationType}
