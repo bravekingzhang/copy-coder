@@ -10,6 +10,7 @@ import remarkGfm from "remark-gfm";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useCodeStore } from "@/store/code";
 import Workbench from "@/components/Workbench";
+import SettingsControl from "@/components/SettingsControl";
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -269,47 +270,12 @@ export default function Home() {
           </div>
 
           {/* Settings Section */}
-          <div className="mt-8 bg-white p-8 rounded-xl border border-gray-200">
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-4">
-                Choose analysis focus:
-              </h3>
-              <select
-                className="w-full p-2 border border-gray-300 rounded-lg"
-                value={applicationType}
-                onChange={(e) => setApplicationType(e.target.value)}
-              >
-                <option value="web">Web applications</option>
-                <option value="mobile">Mobile applications</option>
-                <option value="desktop">Desktop applications</option>
-              </select>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold">Temperature:</h3>
-                <span className="text-sm text-gray-500">{temperature}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Precise</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={temperature}
-                  onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:bg-blue-700"
-                />
-                <span className="text-sm text-gray-500">Creative</span>
-              </div>
-              <p className="mt-2 text-xs text-gray-500">
-                Adjust temperature to control the creativity level of the
-                generated content. Lower values produce more focused results,
-                while higher values increase creativity and variability.
-              </p>
-            </div>
-          </div>
+          <SettingsControl
+            applicationType={applicationType}
+            temperature={temperature}
+            onApplicationTypeChange={setApplicationType}
+            onTemperatureChange={setTemperature}
+          />
 
           <div className="space-y-8 mt-8">
             {/* Prompt Section */}
