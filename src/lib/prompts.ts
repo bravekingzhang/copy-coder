@@ -91,7 +91,7 @@ you should analyze the image and generate a detailed analysis that includes:
 
 ### development_planning
 
-this is the last part of the prompt, you should analyze the development plan based on the image analysis, including:
+for this part, you should analyze the development plan based on the image analysis, including:
 
 1. Project Structure:
 - Describe the recommended folder organization:
@@ -339,7 +339,7 @@ Data Structure:
 
 4. Routes:
 - Index Page: canvas to view demodesc
-- Generation API: "API.js" for generating prompts based on the农民手头其他上载的image data from the app component.
+- Generation API: "API.js" for generating prompts based on image data from the app component.
 - Navigation links: Home, Instruction, About, Contact.
 - Login State: "AuthMiddleware.js".
 
