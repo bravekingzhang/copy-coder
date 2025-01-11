@@ -236,7 +236,7 @@ const Workbench = () => {
                   </div>
                 </ResizablePanel>
                 <ResizableHandle />
-                <ResizablePanel defaultSize={33}>
+                <ResizablePanel defaultSize={34}>
                   {/* 终端 */}
                   <div className="h-full border border-gray-200 rounded-lg overflow-hidden flex flex-col">
                     <div className="bg-gray-100 p-2 flex items-center gap-2">
