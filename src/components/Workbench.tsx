@@ -213,7 +213,7 @@ const Workbench = () => {
   };
 
   return (
-    <div className="h-[600px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
+    <div className="h-[800px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
       {/* 文件浏览器 */}
       <div className="col-span-3 border-r border-gray-200 overflow-y-auto">
         <div className="font-semibold mb-4 flex items-center gap-2">
