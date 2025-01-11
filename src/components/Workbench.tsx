@@ -6,6 +6,7 @@ import type { Terminal } from 'xterm'
 import { useCodeStore } from '@/store/code'
 import { Folder, File, Terminal as TerminalIcon, Code, Globe } from 'lucide-react'
 import type { TerminalWrapperProps } from './TerminalWrapper'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
 type TabType = 'code' | 'preview'
 
@@ -175,36 +176,22 @@ const Workbench = () => {
       <div className="col-span-9 grid grid-rows-2 gap-4">
         {/* 文件内容/预览 */}
         <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <div className="bg-gray-100 p-2">
-            <div className="flex border-b">
-              <button
-                className={`px-4 py-2 flex items-center gap-2 ${
-                  activeTab === 'code'
-                    ? 'border-b-2 border-blue-500 text-blue-500'
-                    : 'text-gray-500'
-                }`}
-                onClick={() => setActiveTab('code')}
-              >
-                <Code className="w-4 h-4" />
-                <span className="text-sm font-medium">
-                  {selectedFile || 'Editor'}
-                </span>
-              </button>
-              <button
-                className={`px-4 py-2 flex items-center gap-2 ${
-                  activeTab === 'preview'
-                    ? 'border-b-2 border-blue-500 text-blue-500'
-                    : 'text-gray-500'
-                }`}
-                onClick={() => setActiveTab('preview')}
-              >
-                <Globe className="w-4 h-4" />
-                <span className="text-sm font-medium">Preview</span>
-              </button>
+          <Tabs value={activeTab} onValueChange={value => setActiveTab(value as TabType)}>
+            <div className="bg-gray-100 p-2">
+              <TabsList className="bg-transparent">
+                <TabsTrigger value="code" className="flex items-center gap-2 data-[state=active]:bg-white">
+                  <Code className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    {selectedFile || 'Editor'}
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger value="preview" className="flex items-center gap-2 data-[state=active]:bg-white">
+                  <Globe className="w-4 h-4" />
+                  <span className="text-sm font-medium">Preview</span>
+                </TabsTrigger>
+              </TabsList>
             </div>
-          </div>
-          <div className="h-full">
-            {activeTab === 'code' ? (
+            <TabsContent value="code" className="m-0">
               <div className="h-full p-4 font-mono text-sm overflow-auto bg-gray-50">
                 {selectedFile && files[selectedFile] ? (
                   <pre>{files[selectedFile]}</pre>
@@ -213,8 +200,21 @@ const Workbench = () => {
                     Select a file to view its contents
                   </div>
                 )}
+                {/* 终端 */}
+                  <div className="border border-gray-200 rounded-lg overflow-hidden flex flex-col h-full">
+                    <div className="bg-gray-100 p-2 flex items-center gap-2">
+                      <TerminalIcon className="w-4 h-4" />
+                      <span className="text-sm font-medium">Terminal</span>
+                    </div>
+                    {isWebcontainerReady && (
+                      <div className="flex-1 min-h-0">
+                        <TerminalWrapper onTerminal={handleTerminal} />
+                      </div>
+                    )}
+                  </div>
               </div>
-            ) : (
+            </TabsContent>
+            <TabsContent value="preview" className="m-0">
               <div className="h-full">
                 {serverUrl ? (
                   <iframe
@@ -228,21 +228,8 @@ const Workbench = () => {
                   </div>
                 )}
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* 终端 */}
-        <div className="border border-gray-200 rounded-lg overflow-hidden flex flex-col h-full">
-          <div className="bg-gray-100 p-2 flex items-center gap-2">
-            <TerminalIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">Terminal</span>
-          </div>
-          {isWebcontainerReady && (
-            <div className="flex-1 min-h-0">
-              <TerminalWrapper onTerminal={handleTerminal} />
-            </div>
-          )}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
