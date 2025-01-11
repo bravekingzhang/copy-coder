@@ -24,6 +24,8 @@ import { javascript } from '@codemirror/lang-javascript';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { oneDark } from '@codemirror/theme-one-dark';
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
 type TabType = "code" | "preview";
 
@@ -315,6 +317,11 @@ const Workbench = () => {
             </TabsContent>
             <TabsContent value="preview" className="m-0 h-full">
               <Preview serverUrl={serverUrl} />
+              {/* download code button */}
+              <Button>
+                <Download className="w-4 h-4" />
+                Download
+              </Button>
             </TabsContent>
           </Tabs>
         </div>

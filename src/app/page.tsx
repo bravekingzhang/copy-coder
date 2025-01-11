@@ -223,11 +223,11 @@ export default function Home() {
               {/* 生成代码按钮 */}
               <div className="w-full justify-end">
                 <Button
-                  className="w-full"
+                  className="w-full p-6 mt-4"
                   onClick={handleGenerateCode}
                   disabled={!generatedPrompt || isGeneratingCode}
                 >
-                  {isGeneratingCode ? "Generating..." : "Generate Code"}
+                  {isGeneratingCode ? "Generating..." : "Generate Code and Preview"}
                 </Button>
               </div>
             </div>
