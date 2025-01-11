@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { WebContainer } from '@webcontainer/api'
-
+import { Terminal } from 'xterm'
 interface FileContent {
   type: 'file'
   filePath: string
@@ -25,6 +25,8 @@ interface CodeState {
   initWebContainer: () => Promise<void>
   parseBoltAction: (action: string) => void
   setServerUrl: (url: string) => void
+  terminal: Terminal | null
+  setTerminal: (terminal: Terminal) => void
 }
 
 export const useCodeStore = create<CodeState>((set, get) => ({
@@ -33,6 +35,7 @@ export const useCodeStore = create<CodeState>((set, get) => ({
   isWebcontainerReady: false,
   serverUrl: null,
   actions: [],
+  terminal: null,
 
   setServerUrl: (url: string) => {
     set({ serverUrl: url })
@@ -45,14 +48,38 @@ export const useCodeStore = create<CodeState>((set, get) => ({
   },
 
   executeShellCommand: async (command: string) => {
-    const { webcontainer, isWebcontainerReady } = get()
+    const { webcontainer, isWebcontainerReady, terminal } = get()
     if (!webcontainer || !isWebcontainerReady) return
 
     try {
-      const shell = await webcontainer.spawn('sh', ['-c', command])
+      const shell = await webcontainer.spawn('sh', ['-c', command], {
+        terminal: {
+          cols: terminal?.cols || 80,
+          rows: terminal?.rows || 24,
+        },
+      })
+
+      // 将输出重定向到终端
+      if (terminal) {
+        const writableStream = new WritableStream({
+          write(data) {
+            terminal.write(data)
+          },
+        })
+        shell.output.pipeTo(writableStream)
+      }
+
+      // 对于特定的长期运行命令，不等待退出
+      if (command.includes('npm run dev') || command.includes('npm start')) {
+        // 保持进程运行
+        return
+      }
+
+      // 其他命令等待完成
       await shell.exit
     } catch (error) {
       console.error('Failed to execute command:', error)
+      terminal?.write('\r\nFailed to execute command: ' + error + '\r\n')
     }
   },
 
@@ -117,5 +144,9 @@ export const useCodeStore = create<CodeState>((set, get) => ({
         actions: [...state.actions, { type: 'shell', command }]
       }))
     }
-  }
+  },
+
+  setTerminal: (terminal: Terminal) => {
+    set({ terminal: terminal });
+  },
 }))

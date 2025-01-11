@@ -142,6 +142,9 @@ const Workbench = () => {
     async (term: Terminal) => {
       if (!webcontainer || !isWebcontainerReady) return;
 
+      // 将终端实例保存到 store
+      useCodeStore.getState().setTerminal(term);
+
       try {
         // 启动一个持久的 shell 会话
         const shellProcess = await webcontainer.spawn("sh", {
