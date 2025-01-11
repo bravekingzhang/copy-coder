@@ -42,6 +42,12 @@ const Workbench = () => {
   const { webcontainer, files, isWebcontainerReady, serverUrl } =
     useCodeStore();
 
+  useEffect(() => {
+    if (serverUrl) {
+      setActiveTab("preview");
+    }
+  }, [serverUrl]);
+
   // 构建文件树
   useEffect(() => {
     const buildFileTree = (paths: string[]): FileTreeNode[] => {

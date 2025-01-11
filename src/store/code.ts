@@ -55,7 +55,7 @@ export const useCodeStore = create<CodeState>((set, get) => ({
       const shell = await webcontainer.spawn('sh', ['-c', command], {
         terminal: {
           cols: terminal?.cols || 80,
-          rows: terminal?.rows || 24,
+          rows: terminal?.rows || 50,
         },
       })
 
