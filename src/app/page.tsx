@@ -160,13 +160,13 @@ export default function Home() {
 
       {/* Main Content Grid */}
       <motion.div
-        className="relative"
+        className={`${generatedCode ? 'relative' : 'relative flex justify-center items-center'}`}
         layout
       >
         {/* Left Column */}
         <motion.div
           layout
-          className={`${generatedCode ? 'w-1/3' : 'max-w-3xl'}`}
+          className={`${generatedCode ? 'w-1/3' : 'max-w-3xl w-full'}`}
           transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
         >
           {/* Upload Section */}
