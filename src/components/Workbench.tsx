@@ -26,6 +26,7 @@ import { css } from '@codemirror/lang-css';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import JSZip from 'jszip';
 
 type TabType = "code" | "preview";
 
@@ -196,6 +197,28 @@ const Workbench = () => {
     [webcontainer, isWebcontainerReady]
   );
 
+  const handleDownload = async () => {
+    const zip = new JSZip();
+
+    // Add all files to the zip
+    Object.entries(files).forEach(([path, content]) => {
+      zip.file(path, content);
+    });
+
+    // Generate the zip file
+    const blob = await zip.generateAsync({ type: 'blob' });
+
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'project.zip';
+    a.click();
+
+    // Clean up
+    URL.revokeObjectURL(url);
+  };
+
   // 添加文件扩展名到语言的映射函数
   const getLanguageExtension = (filename: string) => {
     const ext = filename.split('.').pop()?.toLowerCase();
@@ -253,6 +276,11 @@ const Workbench = () => {
                   <span className="text-sm font-medium">Preview</span>
                 </TabsTrigger>
               </TabsList>
+               {/* download code button */}
+               <Button className="relative left-4" onClick={handleDownload}>
+                  <Download className="w-4 h-4" />
+                  Download
+               </Button>
             </div>
             {/* 代码编辑器/终端 */}
             <TabsContent value="code" className="m-0 h-full">
@@ -316,12 +344,7 @@ const Workbench = () => {
               </ResizablePanelGroup>
             </TabsContent>
             <TabsContent value="preview" className="m-0 h-full">
-              <Preview serverUrl={serverUrl} />
-              {/* download code button */}
-              <Button>
-                <Download className="w-4 h-4" />
-                Download
-              </Button>
+                <Preview serverUrl={serverUrl} />
             </TabsContent>
           </Tabs>
         </div>
