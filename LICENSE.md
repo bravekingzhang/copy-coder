@@ -20,5 +20,5 @@ Requirements for Commercial Use:
 2. You must acquire a valid commercial license
 3. You must comply with the terms of the commercial license agreement
 
-Copyright (c) 2024 [老码小张/天有时]
+Copyright (c) 2024 [老码小张/天有时(深圳)有限公司]
 All Rights Reserved.
