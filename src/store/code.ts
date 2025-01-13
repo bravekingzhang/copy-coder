@@ -27,6 +27,7 @@ interface CodeState {
   setServerUrl: (url: string) => void
   terminal: Terminal | null
   setTerminal: (terminal: Terminal) => void
+  clearState: () => Promise<void>
 }
 
 export const useCodeStore = create<CodeState>((set, get) => ({
@@ -148,5 +149,24 @@ export const useCodeStore = create<CodeState>((set, get) => ({
 
   setTerminal: (terminal: Terminal) => {
     set({ terminal: terminal });
+  },
+
+  clearState: async () => {
+    const { webcontainer, files } = get();
+
+    console.log('clearState', webcontainer, files)
+    // 清理 store 中的文件记录
+    set({ files: {}, actions: [], serverUrl: null });
+
+    // 清理 webcontainer 中的文件
+    if (webcontainer && Object.keys(files).length > 0) {
+      for (const filePath of Object.keys(files)) {
+        try {
+          await webcontainer.fs.rm(filePath, { force: true, recursive: true });
+        } catch (error) {
+          console.error(`Failed to remove file ${filePath}:`, error);
+        }
+      }
+    }
   },
 }))

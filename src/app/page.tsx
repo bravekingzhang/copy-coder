@@ -74,6 +74,8 @@ export default function Home() {
 
     try {
       setIsGeneratingCode(true);
+      await useCodeStore.getState().clearState();
+
       const stream = await generateCodeAction(
         codeWithImage,
         selectedImage,
@@ -127,7 +129,7 @@ export default function Home() {
     } finally {
       setIsGeneratingCode(false);
     }
-  }, [selectedImage, generatedPrompt, temperature]);
+  }, [selectedImage, generatedPrompt, codeWithImage, temperature]);
 
 
   const removeImage = useCallback(() => {
