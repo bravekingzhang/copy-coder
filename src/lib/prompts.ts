@@ -18,10 +18,11 @@ export const getSystemAnalysisPrompt = (applicationType: string) => {
 8. Accurately implement necessary grid layouts
 9. Follow proper import practices:
    - DO NOT USE TYPESCRIPT,USE JAVASCRIPT,KEEP IT SIMPLE!
+   - postcss.config.mjs should be configured
    - Use @/ path aliases,and don't forget configure in tsconfig.json or other needed config files
    - Keep component imports organized
-   - Update current src/app/page.tsx with new comprehensive code
-   - Don't forget root route (page.tsx) handling
+   - Update current src/app/page.jsx with new comprehensive code
+   - Don't forget root route (page.jsx) handling
    - You MUST complete the entire prompt before stopping
 `
 
@@ -33,10 +34,11 @@ const RESPONSE_PREFIX_FRONTEND = `Use React framework, Create detailed component
 5. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header
 6. Accurately implement necessary grid layouts
 7. Follow proper import practices:
-   - DO NOT USE TYPESCRIPT,USE JAVASCRIPT,KEEP IT SIMPLE!
+   - WE SHOULD USE JAVASCRIPT WITH REACT,KEEP IT SIMPLE!
+   - postcss.config.mjs should be configured
    - Use @/ path aliases,and don't forget configure path alias in vite.config.js or other needed config files
    - Keep component imports organized
-   - Don't forget root route (page.tsx) handling
+   - Don't forget root route (page.jsx) handling
    - You MUST complete the entire prompt before stopping
 `
 
