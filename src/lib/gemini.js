@@ -1,9 +1,19 @@
 import OpenAI from 'openai'
 import { getSystemAnalysisPrompt, getSystemCodePrompt } from './prompts'
 const openai = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.VISION_API_KEY,
+  baseURL: process.env.VISION_BASE_URL,
 })
+
+let openaiCode;
+if (!process.env.USE_VISION_MODEL_CODE) {
+  openaiCode = new OpenAI({
+    apiKey: process.env.CHAT_API_KEY,
+    baseURL: process.env.CHAT_BASE_URL,
+  })
+}else{
+  openaiCode = openai;
+}
 
 export async function generatePrompt(base64Image, applicationType, temperature = 0.2) {
   const messages = [
@@ -29,7 +39,7 @@ export async function generatePrompt(base64Image, applicationType, temperature =
   ];
   try {
     const stream = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-exp:free",
+      model: process.env.VISION_MODEL,
       messages: messages,
       temperature: temperature,
       stream: true,
@@ -42,18 +52,21 @@ export async function generatePrompt(base64Image, applicationType, temperature =
   }
 }
 
-export async function generateCode(base64Image, prompt, temperature = 0.2) {
+export async function generateCode(useVisionModel,base64Image, prompt, temperature = 0.2) {
   const messages = [
     {
       "role": "system",
       "content": getSystemCodePrompt()
     },
-    {
+  ];
+
+  if(process.env.CODE_WITH_IMAGE){
+    messages.push({
       "role": "user",
       "content": [
         {
           "type": "text",
-          "text": `Please generate this application based on the image and prompt: ${prompt}`,
+          "text": `Please generate this application based on the image and description\n: ${prompt}`,
         },
         {
           "type": "image_url",
@@ -62,11 +75,16 @@ export async function generateCode(base64Image, prompt, temperature = 0.2) {
           },
         },
       ],
-    }
-  ];
+    });
+  }else{
+    messages.push({
+      "role": "user",
+      "content": `Please generate this application based on the description\n: ${prompt}`,
+    });
+  }
 
   try {
-    const stream = await openai.chat.completions.create({
+    const stream = await openaiCode.chat.completions.create({
       model: "google/gemini-2.0-flash-exp:free",
       messages: messages,
       temperature: temperature,
