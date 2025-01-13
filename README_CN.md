@@ -3,7 +3,7 @@
 基于 AI 的提示生成工具，可以从 UI 设计和模型中生成详细的开发提示。完美适配 Cursor、Bolt 和 v0.dev 等现代 AI 编程工具。
 
 
-[![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbravekingzhang%2Fcopy-coder&env=GEMINI_API_KEY&envDescription=API%20key%20required%20for%20Gemini%20API%20access&envLink=https%3A%2F%2Fmakersuite.google.com%2Fapp%2Fapikey&demo-title=Super%20Copy%20Coder&demo-description=AI-powered%20prompt%20generator%20for%20developers&demo-url=https%3A%2F%2Fsuper-copy-coder.vercel.app)
+[![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbravekingzhang%2Fcopy-coder&env=VISION_API_KEY,CHAT_API_KEY&envDescription=API%20keys%20required%20for%20OpenRouter%20and%20DeepSeek%20API%20access&envLink=https%3A%2F%2Fopenrouter.ai%2Fdocs&demo-title=Super%20Copy%20Coder&demo-description=AI-powered%20prompt%20generator%20for%20developers&demo-url=https%3A%2F%2Fsuper-copy-coder.vercel.app)
 
 [English](./README.md) | [中文](./README_CN.md)
 
@@ -45,12 +45,17 @@
 
 ## 技术栈
 
-- Next.js 14 (App Router)
+- Next.js 15
 - TypeScript
 - Tailwind CSS
-- OpenAI/Gemini API 集成
-- React Markdown
+- OpenRouter (Gemini Vision) / DeepSeek API 集成
+- React Markdown 支持 GFM
 - Lucide Icons
+- Xterm.js 终端模拟
+- Zustand 状态管理
+- CodeMirror 代码编辑器
+- Radix UI 组件
+- Framer Motion 动画
 
 ## 快速开始
 
@@ -68,13 +73,18 @@ npm install
 3. 设置环境变量：
 在根目录创建 `.env` 文件：
 ```env
+# Vision 模型配置
 VISION_BASE_URL=https://openrouter.ai/api/v1
 VISION_API_KEY=your_openrouter_api_key
-VISION_MODEL=google/gemini-exp-1206:free
+VISION_MODEL=google/gemini-2.0-flash-exp:free
+
+# Vision 模型使用开关
 USE_VISION_MODEL_CODE=false
+
+# Chat 模型配置
 CHAT_BASE_URL=https://api.deepseek.com/v1
-CHAT_MODEL=deepseek-chat
 CHAT_API_KEY=your_deepseek_api_key
+CHAT_MODEL=deepseek-chat
 ```
 
 4. 运行开发服务器：
@@ -126,9 +136,10 @@ cd copy-coder
 cp .env.example .env
 ```
 
-3. 编辑 `.env` 文件，添加你的 Gemini API 密钥：
+3. 编辑 `.env` 文件，添加你的 API 密钥：
 ```env
-GEMINI_API_KEY=your_api_key_here
+VISION_API_KEY=your_openrouter_api_key
+CHAT_API_KEY=your_deepseek_api_key
 ```
 
 4. 使用 Docker Compose 构建并启动应用：
@@ -153,7 +164,7 @@ docker compose down
 4. 自动部署应用
 
 部署后，你需要：
-1. 在 Vercel 项目设置中配置 `GEMINI_API_KEY`
+1. 在 Vercel 项目设置中配置 `VISION_API_KEY` 和 `CHAT_API_KEY` 以及其他环境变量
 2. 根据需要配置其他环境变量
 
 ### 手动部署
