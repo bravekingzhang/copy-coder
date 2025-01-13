@@ -67,7 +67,13 @@ npm install
 3. Set up environment variables:
 Create a `.env` file in the root directory with:
 ```env
-GEMINI_API_KEY=your_api_key_here
+VISION_BASE_URL=https://openrouter.ai/api/v1
+VISION_API_KEY=your_openrouter_api_key
+VISION_MODEL=google/gemini-exp-1206:free
+USE_VISION_MODEL_CODE=false
+CHAT_BASE_URL=https://api.deepseek.com/v1
+CHAT_MODEL=deepseek-chat
+CHAT_API_KEY=your_deepseek_api_key
 ```
 
 4. Run the development server:

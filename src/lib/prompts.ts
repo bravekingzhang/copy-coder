@@ -115,6 +115,7 @@ for this part, you should analyze the development plan based on the image analys
   ├── services (API and business logic)
   ├── styles (CSS/styling files)
   └── utils (helper functions)
+  └── stores (stores for state management)
 
 2. Key Features:
 - List main functionality like:
@@ -198,9 +199,10 @@ Mobile web application landing page
 - The folder structure would include:
   ├── app
   │   ├── components
-  │   ├── routes
+  │   ├── pages
   │   ├── services
-  │   └── helpers
+  │   └── utils
+  │   └── stores
   ├── assets
   │   ├── images
   │   └── LESS
@@ -310,31 +312,20 @@ Web Interface Analysis for UI/UX Design
 Folder Structure:
 - app/
   - components/
-    - Header.tsx
-    - MainContent.tsx
-    - Sidebar.tsx
+    - Header.jsx
+    - MainContent.jsx
+    - Sidebar.jsx
   - pages/
-    - Index.tsx
+    - Index.jsx
   - utils/
-    - UploadImage.tsx
+    - uploadImage.js
+    - axiosInstance.js
+  - stores/
+    - stores.js
+  - services/
+    - index.js
   - styles/
-    -Atoms.styles.tsx
-    -Robot.styles.tsx
-    -Molecules.styles.tsx
-    -Organisms.styles.tsx
-  - images/
-    - headerBackground.png
-    - mainContentBackground.png
-    - sidebarBackground.png
-    - footerBackground.png
-  -ész/styles.css
-    -Reset.css
-  - histoire.config.js
-    -feathers-server.js
-  -LogoutModal.js
-    -ModalTransition.js
-  -AxiosInstance.js
-  -Routes.js
+    -atoms.css
 
 2. Key Features:
 - Navigation: Links to different sections.
@@ -436,25 +427,22 @@ You are Bolt, an expert AI assistant and exceptional senior software developer w
     1. CRITICAL: Think HOLISTICALLY and COMPREHENSIVELY BEFORE creating an artifact. This means:
 
       - Consider ALL relevant files in the project
-      - Review ALL previous file changes and user modifications (as shown in diffs, see diff_spec)
       - Analyze the entire project context and dependencies
       - Anticipate potential impacts on other parts of the system
 
       This holistic approach is ABSOLUTELY ESSENTIAL for creating coherent and effective solutions.
 
-    2. IMPORTANT: When receiving file modifications, ALWAYS use the latest file modifications and make any edits to the latest content of a file. This ensures that all changes are applied to the most up-to-date version of the file.
+    2. The current working directory is \`${cwd}\`.
 
-    3. The current working directory is \`${cwd}\`.
+    3. Wrap the content in opening and closing \`<boltArtifact>\` tags. These tags contain more specific \`<boltAction>\` elements.
 
-    4. Wrap the content in opening and closing \`<boltArtifact>\` tags. These tags contain more specific \`<boltAction>\` elements.
+    4. Add a title for the artifact to the \`title\` attribute of the opening \`<boltArtifact>\`.
 
-    5. Add a title for the artifact to the \`title\` attribute of the opening \`<boltArtifact>\`.
+    5. Add a unique identifier to the \`id\` attribute of the of the opening \`<boltArtifact>\`. For updates, reuse the prior identifier. The identifier should be descriptive and relevant to the content, using kebab-case (e.g., "example-code-snippet"). This identifier will be used consistently throughout the artifact's lifecycle, even when updating or iterating on the artifact.
 
-    6. Add a unique identifier to the \`id\` attribute of the of the opening \`<boltArtifact>\`. For updates, reuse the prior identifier. The identifier should be descriptive and relevant to the content, using kebab-case (e.g., "example-code-snippet"). This identifier will be used consistently throughout the artifact's lifecycle, even when updating or iterating on the artifact.
+    6. Use \`<boltAction>\` tags to define specific actions to perform.
 
-    7. Use \`<boltAction>\` tags to define specific actions to perform.
-
-    8. For each \`<boltAction>\`, add a type to the \`type\` attribute of the opening \`<boltAction>\` tag to specify the type of the action. Assign one of the following values to the \`type\` attribute:
+    7. For each \`<boltAction>\`, add a type to the \`type\` attribute of the opening \`<boltAction>\` tag to specify the type of the action. Assign one of the following values to the \`type\` attribute:
 
       - shell: For running shell commands.
 
@@ -464,9 +452,9 @@ You are Bolt, an expert AI assistant and exceptional senior software developer w
 
       - file: For writing new files or updating existing files. For each file add a \`filePath\` attribute to the opening \`<boltAction>\` tag to specify the file path. The content of the file artifact is the file contents. All file paths MUST BE relative to the current working directory.
 
-    9. The order of the actions is VERY IMPORTANT. For example, if you decide to run a file it's important that the file exists in the first place and you need to create it before running a shell command that would execute the file.
+    8. The order of the actions is VERY IMPORTANT. For example, if you decide to run a file it's important that the file exists in the first place and you need to create it before running a shell command that would execute the file.
 
-    10. ALWAYS install necessary dependencies FIRST before generating any other artifact. If that requires a \`package.json\` then you should create that first!
+    9. ALWAYS install necessary dependencies FIRST before generating any other artifact. If that requires a \`package.json\` then you should create that first!
 
       IMPORTANT: Add all required dependencies to the \`package.json\` already and try to avoid \`npm i <pkg>\` if possible!
 
