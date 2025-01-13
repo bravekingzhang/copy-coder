@@ -287,11 +287,12 @@ const Workbench = () => {
               <ResizablePanelGroup direction="vertical">
                 {/* 代码编辑器 */}
                 <ResizablePanel defaultSize={66}>
-                  <div className="h-full bg-gray-50">
+                  <div className="h-full w-full bg-gray-50">
                     {selectedFile && files[selectedFile] ? (
                       <CodeMirror
                         value={files[selectedFile]}
                         height="100%"
+                        className="h-full w-full"
                         theme={oneDark}
                         extensions={[getLanguageExtension(selectedFile)]}
                         basicSetup={{
