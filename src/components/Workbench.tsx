@@ -27,7 +27,6 @@ import { oneDark } from '@codemirror/theme-one-dark';
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import JSZip from 'jszip';
-import { FitAddon } from '@xterm/addon-fit';
 
 type TabType = "code" | "preview";
 
@@ -51,7 +50,6 @@ const Workbench = () => {
   const { webcontainer, files, isWebcontainerReady, serverUrl } =
     useCodeStore();
   const terminalRef = useRef<Terminal | null>(null);
-  const fitAddonRef = useRef<FitAddon>(new FitAddon());
 
   useEffect(() => {
     if (serverUrl) {
@@ -159,7 +157,6 @@ const Workbench = () => {
     async (term: Terminal) => {
       if (!webcontainer || !isWebcontainerReady) return;
       terminalRef.current = term;
-      term.loadAddon(fitAddonRef.current);
 
       // 将终端实例保存到 store
       useCodeStore.getState().setTerminal(term);
@@ -243,9 +240,7 @@ const Workbench = () => {
   };
 
   const handlePanelResize = useCallback(() => {
-    if (terminalRef.current) {
-      fitAddonRef.current.fit();
-    }
+    window.dispatchEvent(new Event('resize'));
   }, []);
 
   return (

@@ -22,6 +22,7 @@ export default function Home() {
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [applicationType, setApplicationType] = useState("frontend");
   const [temperature, setTemperature] = useState(0.2);
+  const [codeWithImage, setCodeWithImage] = useState(false);
   const [promptCopiedText, copyPromptToClipboard] = useCopyToClipboard();
   const promptContainerRef = useRef<HTMLDivElement>(null);
 
@@ -74,6 +75,7 @@ export default function Home() {
     try {
       setIsGeneratingCode(true);
       const stream = await generateCodeAction(
+        codeWithImage,
         selectedImage,
         generatedPrompt,
         temperature
@@ -180,8 +182,10 @@ export default function Home() {
           <CollapsibleSettings
             applicationType={applicationType}
             temperature={temperature}
+            codeWithImage={codeWithImage}
             onApplicationTypeChange={setApplicationType}
             onTemperatureChange={setTemperature}
+            onCodeWithImageChange={setCodeWithImage}
           />
 
           <div className="space-y-8 mt-8">

@@ -1,19 +1,22 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import SettingsControl from "@/components/SettingsControl"
-import { Settings } from "lucide-react"
 
 interface CollapsibleSettingsProps {
   applicationType: string
   temperature: number
+  codeWithImage: boolean
   onApplicationTypeChange: (value: string) => void
   onTemperatureChange: (value: number) => void
+  onCodeWithImageChange: (value: boolean) => void
 }
 
 export default function CollapsibleSettings({
   applicationType,
   temperature,
+  codeWithImage,
   onApplicationTypeChange,
   onTemperatureChange,
+  onCodeWithImageChange,
 }: CollapsibleSettingsProps) {
   return (
     <Accordion type="single" collapsible>
@@ -28,8 +31,10 @@ export default function CollapsibleSettings({
           <SettingsControl
             applicationType={applicationType}
             temperature={temperature}
+            codeWithImage={codeWithImage}
             onApplicationTypeChange={onApplicationTypeChange}
             onTemperatureChange={onTemperatureChange}
+            onCodeWithImageChange={onCodeWithImageChange}
           />
         </AccordionContent>
       </AccordionItem>

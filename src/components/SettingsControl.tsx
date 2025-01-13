@@ -1,19 +1,23 @@
 "use client";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
+import { Switch } from "@/components/ui/switch";
 interface SettingsControlProps {
   applicationType: string;
   temperature: number;
+  codeWithImage: boolean;
   onApplicationTypeChange: (value: string) => void;
   onTemperatureChange: (value: number) => void;
+  onCodeWithImageChange: (value: boolean) => void;
 }
 
 const SettingsControl = ({
   applicationType,
   temperature,
+  codeWithImage,
   onApplicationTypeChange,
   onTemperatureChange,
+  onCodeWithImageChange,
 }: SettingsControlProps) => {
   return (
     <div className="mt-8 bg-white p-8 rounded-xl border border-gray-200">
@@ -29,6 +33,15 @@ const SettingsControl = ({
             <SelectItem value="frontend">Absolute Frontend</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Code with image */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-4">Code with image:</h3>
+        <Switch checked={codeWithImage} onCheckedChange={onCodeWithImageChange} />
+        <p className="mt-2 text-xs text-gray-500">
+          If the model supports it, you can switch it on to generate code with image. maybe it will be more accurate.
+        </p>
       </div>
 
       {/* Temperature Control */}

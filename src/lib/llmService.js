@@ -5,17 +5,24 @@ const openai = new OpenAI({
   baseURL: process.env.VISION_BASE_URL,
 })
 
+console.log(`current vision model: ${process.env.VISION_MODEL}`)
+
+const useVisionModelCode = process.env.USE_VISION_MODEL_CODE === "true"
+
 let openaiCode;
-if (!process.env.USE_VISION_MODEL_CODE) {
+console.log(`shell we use vision model for code: ${useVisionModelCode}`)
+if (useVisionModelCode) {
+  openaiCode = openai;
+  console.log(`use vision model for code: ${process.env.VISION_MODEL}`)
+}else{
   openaiCode = new OpenAI({
     apiKey: process.env.CHAT_API_KEY,
     baseURL: process.env.CHAT_BASE_URL,
   })
-}else{
-  openaiCode = openai;
+  console.log(`use isolated code model: ${process.env.CHAT_MODEL}`)
 }
 
-export async function generatePrompt(base64Image, applicationType, temperature = 0.2) {
+export async function generatePrompt( base64Image, applicationType, temperature = 0.2) {
   const messages = [
     {
       "role": "system",
@@ -52,7 +59,7 @@ export async function generatePrompt(base64Image, applicationType, temperature =
   }
 }
 
-export async function generateCode(useVisionModel,base64Image, prompt, temperature = 0.2) {
+export async function generateCode(codeWithImage=false,base64Image, prompt, temperature = 0.2) {
   const messages = [
     {
       "role": "system",
@@ -60,7 +67,7 @@ export async function generateCode(useVisionModel,base64Image, prompt, temperatu
     },
   ];
 
-  if(process.env.CODE_WITH_IMAGE){
+  if(codeWithImage){
     messages.push({
       "role": "user",
       "content": [
@@ -85,7 +92,7 @@ export async function generateCode(useVisionModel,base64Image, prompt, temperatu
 
   try {
     const stream = await openaiCode.chat.completions.create({
-      model: "google/gemini-2.0-flash-exp:free",
+      model: useVisionModelCode?process.env.VISION_MODEL:process.env.CHAT_MODEL,
       messages: messages,
       temperature: temperature,
       stream: true,

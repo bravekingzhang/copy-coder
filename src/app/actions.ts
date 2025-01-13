@@ -17,8 +17,8 @@ export async function generatePromptAction(base64Image: string, applicationType:
   }
 }
 
-export async function generateCodeAction(base64Image: string, prompt: string, temperature = 0.2) {
+export async function generateCodeAction(codeWithImage: boolean,base64Image: string, prompt: string, temperature = 0.2) {
   const imageData = base64Image.split(',')[1]
-  const stream = await generateCode(imageData, prompt, temperature)
+  const stream = await generateCode(codeWithImage,imageData, prompt, temperature)
   return stream
 }
