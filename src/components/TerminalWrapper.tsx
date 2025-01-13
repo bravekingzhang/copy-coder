@@ -8,7 +8,7 @@ export interface TerminalWrapperProps {
   onTerminal: (terminal: Terminal) => void
 }
 
-const TerminalWrapper = ({ onTerminal }: TerminalWrapperProps) => {
+const TerminalWrapper = ({ onTerminal}: TerminalWrapperProps) => {
   const terminalRef = useRef<HTMLDivElement>(null)
   const terminalInstance = useRef<Terminal | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)

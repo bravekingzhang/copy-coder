@@ -1,6 +1,6 @@
 'use server'
 
-import { generatePrompt, generateCode } from '@/lib/gemini'
+import { generatePrompt, generateCode } from '@/lib/llmService'
 
 export async function generatePromptAction(base64Image: string, applicationType: string, temperature: number = 0.2) {
   try {
