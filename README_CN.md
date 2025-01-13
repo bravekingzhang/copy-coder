@@ -11,6 +11,8 @@
 
 ![Super Copy Coder 预览](./artificial/screen.jpg)
 
+![Super Copy Coder 预览](./artificial/screen-2.png)
+
 ### 核心功能：
 
 1. **上传与分析**
