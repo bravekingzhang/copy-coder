@@ -18,15 +18,15 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
-import Preview from './Preview';
-import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
-import { html } from '@codemirror/lang-html';
-import { css } from '@codemirror/lang-css';
-import { oneDark } from '@codemirror/theme-one-dark';
+import Preview from "./Preview";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { html } from "@codemirror/lang-html";
+import { css } from "@codemirror/lang-css";
+import { oneDark } from "@codemirror/theme-one-dark";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import JSZip from 'jszip';
+import JSZip from "jszip";
 
 type TabType = "code" | "preview";
 
@@ -208,13 +208,13 @@ const Workbench = () => {
     });
 
     // Generate the zip file
-    const blob = await zip.generateAsync({ type: 'blob' });
+    const blob = await zip.generateAsync({ type: "blob" });
 
     // Create download link
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'project.zip';
+    a.download = "project.zip";
     a.click();
 
     // Clean up
@@ -223,16 +223,16 @@ const Workbench = () => {
 
   // 添加文件扩展名到语言的映射函数
   const getLanguageExtension = (filename: string) => {
-    const ext = filename.split('.').pop()?.toLowerCase();
+    const ext = filename.split(".").pop()?.toLowerCase();
     switch (ext) {
-      case 'js':
-      case 'jsx':
-      case 'ts':
-      case 'tsx':
+      case "js":
+      case "jsx":
+      case "ts":
+      case "tsx":
         return javascript({ jsx: true, typescript: true });
-      case 'html':
+      case "html":
         return html();
-      case 'css':
+      case "css":
         return css();
       default:
         return javascript();
@@ -240,7 +240,7 @@ const Workbench = () => {
   };
 
   const handlePanelResize = useCallback(() => {
-    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event("resize"));
   }, []);
 
   return (
@@ -258,41 +258,41 @@ const Workbench = () => {
       <div className="col-span-9 h-full">
         {/* 文件内容/预览 */}
         <div className="h-full border border-gray-200 rounded-lg overflow-hidden">
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => setActiveTab(value as TabType)}
-            className="h-full flex flex-col"
-          >
-            <div className="bg-gray-100 p-2">
-              <TabsList className="bg-transparent">
-                <TabsTrigger
-                  value="code"
-                  className="flex items-center gap-2 data-[state=active]:bg-white"
-                >
-                  <Code className="w-4 h-4" />
-                  <span className="text-sm font-medium">
-                    {selectedFile || "Editor"}
-                  </span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="preview"
-                  className="flex items-center gap-2 data-[state=active]:bg-white"
-                >
-                  <Globe className="w-4 h-4" />
-                  <span className="text-sm font-medium">Preview</span>
-                </TabsTrigger>
-              </TabsList>
-               {/* download code button */}
-               <Button className="relative left-4" onClick={handleDownload}>
-                  <Download className="w-4 h-4" />
-                  Download
-               </Button>
-            </div>
-            {/* 代码编辑器/终端 */}
-            <TabsContent value="code" className="m-0 h-full">
-              <ResizablePanelGroup direction="vertical">
-                {/* 代码编辑器 */}
-                <ResizablePanel defaultSize={56}>
+          <ResizablePanelGroup direction="vertical">
+            {/* 代码编辑器 */}
+            <ResizablePanel defaultSize={66}>
+              <Tabs
+                value={activeTab}
+                onValueChange={(value) => setActiveTab(value as TabType)}
+                className="h-full flex flex-col"
+              >
+                <div className="bg-gray-100 p-2">
+                  <TabsList className="bg-transparent">
+                    <TabsTrigger
+                      value="code"
+                      className="flex items-center gap-2 data-[state=active]:bg-white"
+                    >
+                      <Code className="w-4 h-4" />
+                      <span className="text-sm font-medium">
+                        {selectedFile || "Editor"}
+                      </span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="preview"
+                      className="flex items-center gap-2 data-[state=active]:bg-white"
+                    >
+                      <Globe className="w-4 h-4" />
+                      <span className="text-sm font-medium">Preview</span>
+                    </TabsTrigger>
+                  </TabsList>
+                  {/* download code button */}
+                  <Button className="relative left-4" onClick={handleDownload}>
+                    <Download className="w-4 h-4" />
+                    Download
+                  </Button>
+                </div>
+                {/* 代码编辑器/终端 */}
+                <TabsContent value="code" className="m-0 h-full">
                   <div className="h-full w-full bg-gray-50">
                     {selectedFile && files[selectedFile] ? (
                       <CodeMirror
@@ -332,28 +332,28 @@ const Workbench = () => {
                       </div>
                     )}
                   </div>
-                </ResizablePanel>
-                <ResizableHandle />
-                <ResizablePanel defaultSize={44} onResize={handlePanelResize}>
-                  {/* 终端 */}
-                  <div className="h-full border border-gray-200 rounded-lg overflow-hidden flex flex-col">
-                    <div className="bg-gray-100 p-2 flex items-center gap-2">
-                      <TerminalIcon className="w-4 h-4" />
-                      <span className="text-sm font-medium">Terminal</span>
-                    </div>
-                    {isWebcontainerReady && (
-                      <div className="flex-1 h-full min-h-0">
-                        <TerminalWrapper onTerminal={handleTerminal} />
-                      </div>
-                    )}
+                </TabsContent>
+                <TabsContent value="preview" className="m-0 h-full">
+                  <Preview serverUrl={serverUrl} />
+                </TabsContent>
+              </Tabs>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel defaultSize={34} onResize={handlePanelResize}>
+              {/* 终端 */}
+              <div className="h-full border border-gray-200 rounded-lg overflow-hidden flex flex-col">
+                <div className="bg-gray-100 p-2 flex items-center gap-2">
+                  <TerminalIcon className="w-4 h-4" />
+                  <span className="text-sm font-medium">Terminal</span>
+                </div>
+                {isWebcontainerReady && (
+                  <div className="flex-1 h-full min-h-0">
+                    <TerminalWrapper onTerminal={handleTerminal} />
                   </div>
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </TabsContent>
-            <TabsContent value="preview" className="m-0 h-full">
-                <Preview serverUrl={serverUrl} />
-            </TabsContent>
-          </Tabs>
+                )}
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
       </div>
     </div>
