@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { Terminal } from "xterm";
 import { useCodeStore } from "@/store/code";
@@ -27,6 +27,7 @@ import { oneDark } from '@codemirror/theme-one-dark';
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import JSZip from 'jszip';
+import { FitAddon } from '@xterm/addon-fit';
 
 type TabType = "code" | "preview";
 
@@ -49,6 +50,8 @@ const Workbench = () => {
   const [activeTab, setActiveTab] = useState<TabType>("code");
   const { webcontainer, files, isWebcontainerReady, serverUrl } =
     useCodeStore();
+  const terminalRef = useRef<Terminal | null>(null);
+  const fitAddonRef = useRef<FitAddon>(new FitAddon());
 
   useEffect(() => {
     if (serverUrl) {
@@ -155,6 +158,8 @@ const Workbench = () => {
   const handleTerminal = useCallback(
     async (term: Terminal) => {
       if (!webcontainer || !isWebcontainerReady) return;
+      terminalRef.current = term;
+      term.loadAddon(fitAddonRef.current);
 
       // 将终端实例保存到 store
       useCodeStore.getState().setTerminal(term);
@@ -237,6 +242,12 @@ const Workbench = () => {
     }
   };
 
+  const handlePanelResize = useCallback(() => {
+    if (terminalRef.current) {
+      fitAddonRef.current.fit();
+    }
+  }, []);
+
   return (
     <div className="h-[800px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
       {/* 文件浏览器 */}
@@ -286,7 +297,7 @@ const Workbench = () => {
             <TabsContent value="code" className="m-0 h-full">
               <ResizablePanelGroup direction="vertical">
                 {/* 代码编辑器 */}
-                <ResizablePanel defaultSize={66}>
+                <ResizablePanel defaultSize={56}>
                   <div className="h-full w-full bg-gray-50">
                     {selectedFile && files[selectedFile] ? (
                       <CodeMirror
@@ -328,7 +339,7 @@ const Workbench = () => {
                   </div>
                 </ResizablePanel>
                 <ResizableHandle />
-                <ResizablePanel defaultSize={34}>
+                <ResizablePanel defaultSize={44} onResize={handlePanelResize}>
                   {/* 终端 */}
                   <div className="h-full border border-gray-200 rounded-lg overflow-hidden flex flex-col">
                     <div className="bg-gray-100 p-2 flex items-center gap-2">
@@ -336,7 +347,7 @@ const Workbench = () => {
                       <span className="text-sm font-medium">Terminal</span>
                     </div>
                     {isWebcontainerReady && (
-                      <div className="flex-1 min-h-0">
+                      <div className="flex-1 h-full min-h-0">
                         <TerminalWrapper onTerminal={handleTerminal} />
                       </div>
                     )}
