@@ -185,7 +185,7 @@ Mobile web application landing page
 - Below the heading, there is a call-to-action button labeled "View Demo" with a rightward arrow icon.
 
 4. Interactive Controls:
-- Interactable elements include the "View Demo" button, the choice of "Desktop applications" for analysis focus, and the "Generate prompt" button.
+- Intractable elements include the "View Demo" button, the choice of "Desktop applications" for analysis focus, and the "Generate prompt" button.
 - There is also an input field for uploading images and a button labeled "Choose image" to select a file.
 
 5. Colors:
@@ -200,18 +200,19 @@ Mobile web application landing page
 
 <development_planning>
 1. Project Structure:
-- The folder structure would include:
-  ├── app
-  │   ├── components
-  │   ├── pages
-  │   ├── services
-  │   └── utils
-  │   └── stores
-  ├── assets
-  │   ├── images
-  │   └── LESS
-  ├── README.md
-  └── package.json
+Key page and component folder structure:
+- app/
+  - components/
+    - Header.jsx
+    - Sidebar.jsx
+    - Footer.jsx
+  - pages/
+    - Home.jsx
+    - Instruction.jsx
+    - About.jsx
+    - Contact.jsx
+    - UploadImage.jsx
+    - GeneratePrompt.jsx
 
 2. Key Features:
 - Drag and drop image upload functionality
@@ -288,7 +289,7 @@ Web Interface Analysis for UI/UX Design
   - Instructions: Text and includes a large upload icon, followed by a text field or label.
   - Open Close: A button to open or close the pop-up.
 - Footer:
-  - Front-end Frameworks: Summararily listed in the footer section.
+  - Front-end Frameworks: Summarily listed in the footer section.
 
 4. Interactive Controls:
 - List and Input Methods:
@@ -313,7 +314,7 @@ Web Interface Analysis for UI/UX Design
 
 <development_planning>
 1. Project Structure:
-Folder Structure:
+Key page and component folder structure:
 - app/
   - components/
     - Header.jsx
@@ -321,15 +322,6 @@ Folder Structure:
     - Sidebar.jsx
   - pages/
     - Index.jsx
-  - utils/
-    - uploadImage.js
-    - axiosInstance.js
-  - stores/
-    - stores.js
-  - services/
-    - index.js
-  - styles/
-    -atoms.css
 
 2. Key Features:
 - Navigation: Links to different sections.
