@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { WebContainer } from '@webcontainer/api'
+import { WebContainer,WebContainerProcess } from '@webcontainer/api'
 import { Terminal } from 'xterm'
 interface FileContent {
   type: 'file'
@@ -17,6 +17,7 @@ type BoltAction = FileContent | ShellCommand
 interface CodeState {
   files: Record<string, string>
   webcontainer: WebContainer | null
+  shellProcess: WebContainerProcess | null
   isWebcontainerReady: boolean
   serverUrl: string | null
   actions: BoltAction[]
@@ -33,6 +34,7 @@ interface CodeState {
 export const useCodeStore = create<CodeState>((set, get) => ({
   files: {},
   webcontainer: null,
+  shellProcess: null,
   isWebcontainerReady: false,
   serverUrl: null,
   actions: [],
@@ -73,9 +75,11 @@ export const useCodeStore = create<CodeState>((set, get) => ({
       // 对于特定的长期运行命令，不等待退出
       if (command.includes('npm run dev') || command.includes('npm start')) {
         // 保持进程运行
+        set({ shellProcess: shell })
         return
       }
 
+      set({ shellProcess: null })
       // 其他命令等待完成
       await shell.exit
     } catch (error) {
@@ -158,6 +162,11 @@ export const useCodeStore = create<CodeState>((set, get) => ({
     // 清理 store 中的文件记录
     set({ files: {}, actions: [], serverUrl: null });
 
+    // 清理 shell 进程
+    if(webcontainer && get().shellProcess !== null){
+      get().shellProcess?.kill();
+      set({ shellProcess: null })
+    }
     // 清理 webcontainer 中的文件
     if (webcontainer && Object.keys(files).length > 0) {
       for (const filePath of Object.keys(files)) {
