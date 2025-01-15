@@ -14,7 +14,7 @@ export const getSystemAnalysisPrompt = (applicationType: string) => {
 4. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
 5. Configure next.config.js image remotePatterns to enable stock photos from picsum.photos
 6. Create root layout.tsx page that wraps necessary navigation items to all pages
-7. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header
+7. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header if it exists
 8. Accurately implement necessary grid layouts
 9. Follow proper import practices:
    - TO KEEP CODE SIMPLE! I recommend you to write business logic and components in javascript instead of typescript,components and pages use jsx instead of tsx
@@ -31,7 +31,7 @@ const RESPONSE_PREFIX_FRONTEND = `Use React framework, Create detailed component
 2. Use Lucide React for icons (from lucide-react package). Do NOT use other UI libraries unless requested
 3. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
 4. Create root layout.tsx page that wraps necessary navigation items to all pages
-5. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header
+5. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header if it exists
 6. Accurately implement necessary grid layouts
 7. Follow proper import practices:
    - TO KEEP CODE SIMPLE! I recommend you to write business logic and components in javascript instead of typescript
@@ -106,8 +106,8 @@ for this part, you should analyze the image and generate a detailed analysis tha
    - Icon sizes
    - Button heights
 
-3. Navigation Elements:
-   - Identify and describe all navigation components
+3. Navigation Elements(if it exists):
+   - Identify and describe all navigation components if it exists
      - Headers (position, height, content structure)
      - Menus (dropdown, hamburger, mega-menu)
      - Sidebars (fixed, collapsible, responsive)
@@ -122,12 +122,14 @@ for this part, you should analyze the image and generate a detailed analysis tha
      - Active/current page indicators
      - Mobile navigation patterns
 
+if there is no navigation elements found in the image, you should return 'None'
+
 4. Layout Components:
    - Break down major layout sections and containers
-     - Header/footer regions
-     - Main content areas
-     - Sidebars and auxiliary content
-     - Modal/overlay components
+     - Header/footer regions if it exists
+     - Main content areas if it exists
+     - Sidebars and auxiliary content if it exists
+     - Modal/overlay components if it exists
    - Describe the purpose and function of each component
      - Content organization
      - User interaction areas
@@ -254,98 +256,301 @@ for this part, you should analyze the development plan based on the image analys
 
 ## few-shot examples:
 
-### example of analysis a picture of a mobile application:
+### example of analysis a picture of a mobile chat application:
 
 ${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
 
 <summary_title>
-Mobile web application landing page
+Mobile Chat Application
 </summary_title>
 
 <image_analysis>
 1. Navigation Elements:
-- The header contains the main navigation items: Home, Instruction, About, and Contact. These links are located in a horizontal list at the top of the page.
-- The header also includes a "Sign in" button on the right side and a brand logo on the left side.
+   - Bottom Navigation Bar:
+     - Position: Fixed bottom
+     - Height: 56px
+     - Background: white
+     - Shadow: 0px -2px 8px rgba(0,0,0,0.05)
+     - Safe area padding: env(safe-area-inset-bottom)
+     - Items:
+       - Chat (active)
+       - Discover
+       - Create
+       - Activity
+       - Profile
+     - Item styling:
+       - Icon size: 24x24
+       - Label size: 12px
+       - Vertical spacing: 4px
+       - Active state: primary-600
+       - Inactive state: gray-500
 
 2. Layout Components:
-- The layout is divided into two sections: the left section contains a large heading and a call-to-action button, while the right section contains a form for uploading images and additional information.
-- The left section has a width of 50% and a height of 100% of the viewport.
-- The right section has a width of 50% and a height of 100% of the viewport.
-- The spacing between the two sections is 20px.
+   - Status Bar:
+     - Height: System default
+     - Style: Light content
+     - Background: white
+   - Main Header:
+     - Height: 44px
+     - Title: "Messages"
+       - Font: SF Pro Display, 16px, semibold
+     - Right action: New message icon
+     - Left action: Edit text
+     - Border bottom: 1px solid gray-100
+   - Stories Section:
+     - Height: 104px
+     - Horizontal scroll
+     - Padding: 12px 16px
+     - Story item:
+       - Width: 64px
+       - Spacing: 12px
+   - Chat List:
+     - Full width
+     - Flexible height
+     - Padding: 0 16px
 
 3. Content Sections:
-- The left section contains a large black heading that reads "Create powerful prompts for Cursor, Bolt, v0 & more..".
-- Below the heading, there is a call-to-action button labeled "View Demo" with a rightward arrow icon.
-- The right section contains a form for uploading images and additional information.
-- The form contains an input field for uploading images and a button labeled "Choose image" to select a file.
-- footer contains a list of front-end frameworks logos "react,vue,angular,svelte,etc".
+   - Stories Row:
+     - Story Item:
+       - Avatar:
+         - Size: 56x56
+         - Border radius: full
+         - Story ring: 2px gradient
+       - Username:
+         - Font: 12px medium
+         - Color: gray-900
+         - Max width: 64px
+         - Truncate: ...
+     - Add Story (first item):
+       - Plus icon: 24x24
+       - "Your Story" label
+
+   - Chat List Items:
+     - Height: 72px
+     - Padding: 12px 0
+     - Avatar:
+       - Size: 48x48
+       - Border radius: full
+     - Content:
+       - Name: 14px semibold
+       - Message: 14px regular
+       - Time: 12px gray-500
+       - Spacing: 4px vertical
+     - Divider:
+       - Height: 1px
+       - Color: gray-100
 
 4. Interactive Controls:
-- Intractable elements include the "View Demo" button, the choice of "Desktop applications" for analysis focus, and the "Generate prompt" button.
-- There is also an input field for uploading images and a button labeled "Choose image" to select a file.
+   - Bottom Tab Items:
+     - Touch target: 56px height
+     - Haptic feedback on press
+     - Transition: 150ms ease
+   - Story Items:
+     - Horizontal scroll with momentum
+     - Tap to view story
+   - Chat Items:
+     - Press feedback: bg-gray-50
+     - Swipe actions:
+       - Left: Pin/Unpin
+       - Right: Delete/Archive
+   - Pull to refresh:
+     - Spinner animation
+     - Bounce effect
 
 5. Colors:
-- Primary colors: #000000 (black), #ffffff (white), and #003366 (dark blue).
-- Secondary colors: #53a2d1 (light blue) and a gradient background color that transitions from #e0e0e0 on smaller screens to #ffffff on larger screens.
-- Text colors: #666666 (gray) for secondary text, and #000000 (black) for primary text.
+   - Primary:
+     - Active: #0095F6 (primary-600)
+     - Story gradient: #DE0046, #F7A34B
+   - Neutral:
+     - Background: #FFFFFF
+     - Text primary: #262626
+     - Text secondary: #8E8E8E
+     - Dividers: #DBDBDB
+   - States:
+     - Press state: gray-50
+     - Active indicator: primary-600
+     - Unread indicator: primary-500
 
 6. Grid/Layout Structure:
-- The page uses a responsive grid layout, switching between two columns on smaller screens and three columns on larger screens.
-- The spacing between columns is 20px, and the spacing between elements within columns is 10px.
+   - Base Layout:
+     - Status bar: System height
+     - Header: 44px
+     - Stories: 104px
+     - Chat list: Flexible
+     - Bottom nav: 56px + safe-area
+   - Horizontal Spacing:
+     - Page padding: 16px
+     - Content spacing: 12px
+   - Vertical Spacing:
+     - Section gaps: 8px
+     - Item padding: 12px
+   - Grid Areas:
+     - Stories: Single row scroll
+     - Chat list: Vertical stack
+   - Safe Areas:
+     - Top: Status bar + notch
+     - Bottom: Home indicator/notch
+7. Visual Style Details:
+   - Typography:
+     - Font Sizes:
+       - Header title: 16px
+       - Tab labels: 12px
+       - Chat name: 14px
+     - Font Weights:
+       - Header title: 600 (semibold)
+       - Tab labels: 500 (medium)
+     - Line Heights:
+       - Header: 1.2
+     - Text Colors:
+       - Primary text: #262626
+       - Secondary text: #8E8E8E
+       - Active tab: #0095F6
+
+   - Spacing:
+     - Padding:
+       - Page horizontal: 16px
+       - Story section: 12px 16px
+     - Margins:
+       - Between stories: 12px
+       - Between chat items: 0
+     - Gaps:
+       - Tab icon to label: 4px
+       - Chat content elements: 4px
+
+   - Effects:
+     - Shadows:
+       - Bottom navigation: 0px -2px 8px rgba(0,0,0,0.05)
+       - Story ring: inset 0 0 0 2px
+     - Gradients:
+       - Story ring: linear-gradient(45deg, #DE0046, #F7A34B)
+     - Transitions:
+       - Tab state: 150ms ease
+       - Press feedback: 100ms ease
+     - Animations:
+       - Pull to refresh: 300ms cubic-bezier
+       - Tab switch: 200ms ease
+
+   - Component States:
+     - Default:
+       - Tab icon: #8E8E8E
+       - Chat item: bg-white
+     - Active:
+       - Tab icon: #0095F6
+       - Chat press: bg-gray-50
+     - Focus:
+       - Input: ring-2 ring-primary
+     - Disabled:
+       - Opacity: 0.5
+       - Pointer-events: none
+
+8. Component Measurements:
+   - Navigation:
+     - Bottom tab height: 56px
+     - Tab icon size: 24x24px
+
+   - Story Section:
+     - Total height: 104px
+     - Story item width: 64px
+
+   - Chat List:
+     - Chat item height: 72px
+     - Avatar size: 48x48px
+
+   - Touch Targets:
+     - Minimum size: 44x44px
+     - Tab touch area: 56px height
+
+   - Border Radius:
+     - Avatars: 50%
+     - Story rings: 50%
+
+   - Safe Areas:
+     - Bottom inset: env(safe-area-inset-bottom)
 </image_analysis>
 
 <development_planning>
 1. Project Structure:
-Assuming the project is a web application,and the Key page and component folder structure may be like this:
 app/
 ├── components/
-│   ├── Header.jsx
-│   ├── Sidebar.jsx
-│   └── Footer.jsx
-└── pages/
-    ├── Home.jsx
-    ├── Instruction.jsx
-    ├── About.jsx
-    ├── Contact.jsx
-    ├── UploadImage.jsx
-    └── GeneratePrompt.jsx
+│   ├── navigation/
+│   │   └── BottomTabs.jsx
+│   ├── stories/
+│   │   ├── StoriesRow.jsx
+│   │   └── StoryItem.jsx
+│   ├── chat/
+│   │   ├── ChatList.jsx
+│   │   └── ChatItem.jsx
+│   └── shared/
+│       ├── Avatar.jsx
+│       └── Header.jsx
+├── pages/
+│   ├── Messages.jsx
+│   ├── Discover.jsx
+│   ├── Create.jsx
+│   ├── Activity.jsx
+│   └── Profile.jsx
+├── styles/
+│   └── globals.css
+└── hooks/
+    ├── useMessages.js
+    └── useStories.js
 
 2. Key Features:
-- Drag and drop image upload functionality
-- View demo
-- Generate prompt functionality
-- Analysis focus selection
-- Front-end frameworks logo integration
+   - Core Features:
+     - Bottom tab navigation
+     - Stories viewing
+     - Chat messaging
+     - Pull to refresh
+   - User Interaction:
+     - Story creation
+     - Message actions
+     - Navigation gestures
+   - UI/UX Elements:
+     - Smooth animations
+     - Loading states
+     - Swipe actions
 
 3. State Management:
-- The application uses a component-based state management strategy with React.js components.
-- Data is managed in components, with props passed between components as needed.
+   - Global States:
+     - Current tab
+     - Unread counts
+     - User session
+   - Local States:
+     - Story views
+     - Chat list
+     - Loading states
+     - Scroll position
 
 4. Routes:
-- The application has the following routes:
-  - Home
-  - About
-  - Contact
-  - Instruction
-  - Upload Image
-  - Generate Prompt (when *Choose analysis focus: Desktop applications* is selected)
+   - /messages (default)
+   - /discover
+   - /create
+   - /activity
+   - /profile
+   - /story/:id
+   - /chat/:id
 
 5. Component Architecture:
-- The component hierarchy is as follows:
-  - 📚 "Instruction" component (parent)
-    - 🔗 "Downloads" (children)
-    - 🚚 "Recipe Guide" (children)
-    - 📚 "About" component (parent)
-    - 📞 "Contact Us" (children)
+   - App (wrapper)
+     - SafeAreaProvider
+       - Header
+       - StoriesRow
+         - StoryItem[]
+       - ChatList
+         - ChatItem[]
+       - BottomTabs
+         - TabItem[]
 
-1. Responsive Breakpoints:
-- The application uses media queries to switch between two and three column grid layouts on desktop and mobile screens, respectively. The media queries are:
-  - @media screen and (min-width: 768px) {
-    // Code for 3-column layout
-  }
-  - @media screen and (max-width: 767px) {
-    // Code for 2-column layout
-  }
+6. Responsive Breakpoints:
+   - Base Mobile: 320px - 374px
+     - Reduced padding (12px)
+     - Smaller avatars (44px)
+   - Standard Mobile: 375px - 428px
+     - Standard layout
+     - Default sizes
+   - Large Mobile: > 428px
+     - Increased touch targets
+     - Larger media
 </development_planning>
 
 
@@ -373,89 +578,42 @@ AI Chat Interface with Personalized Greeting and Quick Actions Menu
 </summary_title>
 
 <image_analysis>
-1. Navigation Elements:
-   - Left Sidebar:
-     - Position: Fixed left, full height
-     - Width: 64px
-     - Background: white
-     - Icons layout: Vertical, centered
-     - Icons spacing: 24px vertical gap
-     - Icons included (top to bottom):
-       - Plus icon (new chat)
-       - Search icon
-       - Document icon
-       - Clock icon
-       - Settings icon
-       - User profile icon (bottom aligned)
-     - Icon states:
-       - Default: gray-600
-       - Hover: gray-800
-       - Active: purple-600
+1. Navigation Elements: None,there is no sidebar or header or menu found in the image
 
 2. Layout Components:
    - Main Content Area:
-     - Position: Margin-left 64px (sidebar width)
-     - Max-width: 768px
-     - Padding: 32px 24px
-     - Background: gray-50
+     ...
    - Content Structure:
-     - Header section (greeting)
-     - Prompt suggestions grid
-     - Input section (bottom)
+     ...
    - Component spacing:
-     - 32px vertical gap between sections
-     - 16px gap between related elements
+     ...
 
 3. Content Sections:
    - Greeting Section:
-     - Title: "Hi there, John"
-       - Font: Inter, 28px, bold
-       - Color: Linear gradient (purple-600 to blue-500)
-     - Subtitle: "What would you like to know?"
-       - Font: Inter, 16px, regular
-       - Color: gray-600
-     - Additional text: "Use one of the most common prompts below or use your own to begin"
-       - Font: Inter, 14px, regular
-       - Color: gray-500
+     ...
+
 
    - Prompt Suggestions:
      - Grid layout: 2x2 on desktop
      - Card dimensions: Equal width, auto height
      - Card styling:
-       - Background: white
-       - Border radius: 8px
-       - Shadow: sm
-       - Padding: 16px
-       - Hover: scale(1.02), shadow-md
+       ...
      - Card content:
-       - Icon: 24x24, gray-600
-       - Text: 14px, gray-700
-       - Spacing: 12px between icon and text
+       ...
 
    - Input Section:
      - Input field:
-       - Height: 48px
-       - Background: white
-       - Border radius: 8px
-       - Padding: 12px 16px
-       - Placeholder: "Ask whatever you want...."
+       ...
      - Character count:
-       - Position: Absolute right
-       - Font: 14px, gray-500
+       ...
      - Action buttons:
-       - Height: 36px
-       - Spacing: 8px between buttons
-       - Icons: 20x20
+       ...
 
 4. Interactive Controls:
    - Sidebar Icons:
-     - Clickable area: 40x40px
-     - Hover effect: scale(1.05)
-     - Active indicator: Left border purple-600
+     ...
    - Prompt Cards:
-     - Hover effect: scale(1.02), shadow-md
-     - Transition: 150ms ease
-     - Cursor: pointer
+     ...
    - Input Field:
      - Focus state: ring-2 ring-purple-500
      - Character limit: 1000
@@ -465,44 +623,81 @@ AI Chat Interface with Personalized Greeting and Quick Actions Menu
      - Disabled state: opacity-50
 
 5. Colors:
-   - Primary:
-     - Purple: #6B46C1 (purple-600)
-     - Blue: #3B82F6 (blue-500)
+   ...
    - Neutral:
-     - Background: #F9FAFB (gray-50)
-     - Text: #111827 (gray-900)
-     - Secondary text: #4B5563 (gray-600)
+     ...
    - Accents:
-     - Gradient: linear-gradient(135deg, #6B46C1 0%, #3B82F6 100%)
+     ...
    - States:
-     - Hover: opacity-80
-     - Active: opacity-70
-     - Disabled: opacity-50
+     ...
 
 6. Grid/Layout Structure:
    - Page Grid:
-     - Sidebar: Fixed 64px
-     - Main content: Fluid
+     ..
    - Content Grid:
-     - Max-width: 768px
-     - Margin: auto
+     ...
    - Prompt Cards Grid:
-     - Desktop: grid-cols-4
-     - Tablet: grid-cols-2
-     - Mobile: grid-cols-1
+     ...
    - Spacing System:
-     - Base unit: 4px
-     - Common spacing: 8px, 16px, 24px, 32px
+     ...
    - Responsive Behavior:
-     - Mobile (<640px):
-       - Single column layout
-       - Collapsed sidebar
-     - Tablet (640px - 1024px):
-       - Two column cards
-       - Visible sidebar
-     - Desktop (>1024px):
-       - Four column cards
-       - Full layout
+     ...
+
+7. Visual Style Details:
+   - Typography:
+     ...
+     - Text Colors:
+       ...
+
+   - Spacing:
+     ...
+     - Padding:
+       ...
+       - Story section: 12px 16px
+     - Margins:
+       ...
+     - Gaps:
+       ...
+
+   - Effects:
+     - Shadows:
+       ...
+     - Gradients:
+       ...
+     - Transitions:
+       ...
+     - Animations:
+       ...
+
+   - Component States:
+     - Default:
+       ...
+     - Active:
+       ...
+     - Focus:
+       ...
+     - Disabled:
+       ...
+
+8. Component Measurements:
+   - Navigation:
+     ...
+
+   - Story Section:
+     ...
+
+   - Chat List:
+     ...
+
+   - Touch Targets:
+     ...
+
+   - Border Radius:
+     ...
+
+   - Safe Areas:
+     ...
+</image_analysis>
 
 <development_planning>
 1. Project Structure:
@@ -545,14 +740,9 @@ app/
 
 3. State Management:
    - Global States:
-     - User session
-     - Current chat context
-     - Selected prompt
+      ...
    - Local States:
-     - Input field content
-     - Character count
-     - Loading states
-     - UI interactions
+      ...
 
 4. Routes:
    - / - Main chat interface
@@ -562,31 +752,18 @@ app/
 
 5. Component Architecture:
    - Layout (wrapper)
-     - Sidebar (navigation)
-     - MainContent
-       - ChatHeader (greeting)
-       - PromptGrid
-         - PromptCard (x4)
-       - ChatInput
-         - InputField
-         - ActionButtons
-         - CharacterCount
+     ..
 
 6. Responsive Breakpoints:
    - Mobile: < 640px
-     - Full width content
-     - Stacked prompt cards
-     - Collapsed sidebar
+     ...
    - Tablet: 640px - 1024px
-     - Two column prompt grid
-     - Visible sidebar
+     ...
    - Desktop: > 1024px
-     - Four column prompt grid
-     - Full layout
+     ...
    - Adjustments:
-     - Font sizes scale down on mobile
-     - Spacing reduces on smaller screens
-     - Touch targets increase on mobile
+     ...
+</image_analysis>
 `
 }
 
