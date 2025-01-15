@@ -9,6 +9,7 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from '@/components/ui/resizable';
+import { type RefObject } from 'react';
 
 interface PreviewProps {
   serverUrl: string | null;
@@ -37,20 +38,32 @@ const Preview = memo(({ serverUrl }: PreviewProps) => {
     });
   };
 
+  const syncPanelSize = (size: number, targetRef: RefObject<ImperativePanelHandle>) => {
+      targetRef.current?.resize(size);
+  };
+
   const handleLeftPanelResize = (size: number) => {
     if (isRightResizing.current) return;
-    isLeftResizing.current = true;
-    setSideSize(size);
-    rightPanelRef.current?.resize(size);
-    isLeftResizing.current = false;
+
+    try {
+      isLeftResizing.current = true;
+      setSideSize(size);
+      syncPanelSize(size, rightPanelRef);
+    } finally {
+      isLeftResizing.current = false;
+    }
   };
 
   const handleRightPanelResize = (size: number) => {
     if (isLeftResizing.current) return;
-    isRightResizing.current = true;
-    setSideSize(size);
-    leftPanelRef.current?.resize(size);
-    isRightResizing.current = false;
+
+    try {
+      isRightResizing.current = true;
+      setSideSize(size);
+      syncPanelSize(size, leftPanelRef);
+    } finally {
+      isRightResizing.current = false;
+    }
   };
 
   return (
