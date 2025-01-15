@@ -76,50 +76,131 @@ The title should:
 
 for this part, you should analyze the image and generate a detailed analysis that includes:
 
-1. Navigation Elements:
-   - Identify and describe all navigation components (headers, menus, sidebars)
+1. Visual Style Details:
+   - Typography:
+     - Font families
+     - Font sizes
+     - Font weights
+     - Text gradients
+     - Line heights
+   - Spacing:
+     - Padding values
+     - Margin values
+     - Gap values
+   - Effects:
+     - Shadows
+     - Gradients
+     - Transitions
+     - Hover states
+   - Component States:
+     - Default
+     - Hover
+     - Focus
+     - Active
+     - Disabled
+
+2. Component Measurements:
+   - Exact dimensions
+   - Padding/margin values
+   - Border radius values
+   - Icon sizes
+   - Button heights
+
+3. Navigation Elements:
+   - Identify and describe all navigation components
+     - Headers (position, height, content structure)
+     - Menus (dropdown, hamburger, mega-menu)
+     - Sidebars (fixed, collapsible, responsive)
+     - Breadcrumbs and secondary navigation
    - Document their placement and organization
+     - Sticky/fixed positioning
+     - Z-index layering
+     - Responsive behavior
    - Note any navigation patterns or hierarchies
+     - Menu depth and nesting
+     - Navigation state management
+     - Active/current page indicators
+     - Mobile navigation patterns
 
-2. Layout Components:
+4. Layout Components:
    - Break down major layout sections and containers
-   - Describe the purpose and function of each layout component
+     - Header/footer regions
+     - Main content areas
+     - Sidebars and auxiliary content
+     - Modal/overlay components
+   - Describe the purpose and function of each component
+     - Content organization
+     - User interaction areas
+     - Information hierarchy
+     - Component responsibilities
    - Explain how components are arranged and interact
+     - Parent-child relationships
+     - Component spacing
+     - Layout flow and wrapping
+     - Component visibility conditions
 
-3. Content Sections:
+5. Content Sections:
    - List and describe all content areas
    - Explain the purpose of each content section
    - Note content hierarchy and relationships
+   - Describe text content details (font sizes, weights, families)
+   - Specify content padding and margins
+   - Document content alignment and positioning
+   - Note any dynamic content areas or placeholders
 
-4. Interactive Controls:
+6. Interactive Controls:
    - Document all interactive elements (buttons, forms, etc.)
    - Describe their functionality and behavior
    - Note any state changes or animations
+   - Specify hover/focus/active states
+   - Document any loading states or transitions
+   - Describe feedback mechanisms (success/error messages)
+   - Note any accessibility considerations (ARIA labels, roles)
+   - Document any validation rules or constraints
 
-5. Colors:
+7. Colors:
    - List the color palette used
    - Explain color usage and purpose
    - Note any color patterns or themes
    - Include specific hex codes
 
-6. Grid/Layout Structure:
+8. Grid/Layout Structure:
    - Describe the overall grid system
+     - Column count and widths
+     - Container max-width and padding
+     - Nested grid structures
    - Document responsive behavior
+     - Breakpoint definitions
+     - Layout changes at each breakpoint
+     - Mobile-first considerations
    - Note spacing and alignment patterns
+     - Vertical and horizontal gaps
+     - Margin and padding patterns
+     - Element alignment rules
+     - Consistent spacing units
    - Explain layout organization principles
+     - Content hierarchy
+     - Visual balance
+     - Whitespace usage
+     - Z-index stacking
+   - Document grid areas and template definitions
+     - Named grid areas
+     - Template columns/rows
+     - Auto-flow behavior
 
 ### development_planning
 
 for this part, you should analyze the development plan based on the image analysis, including:
 
 1. Project Structure:
-- Describe the recommended folder organization:
-  ├── components (reusable UI components)
-  ├── pages (page-level components)
-  ├── services (API and business logic)
-  ├── styles (CSS/styling files)
-  └── utils (helper functions)
-  └── stores (stores for state management)
+- Describe the recommended folder organization，for example:
+  - app/
+    ├── components/ (reusable UI components)
+    ├── pages/ (page-level components)
+    ├── services/ (API and business logic)
+    ├── styles/ (CSS/styling files)
+    └── utils/ (helper functions)
+    └── stores/ (stores for state management)
 
 2. Key Features:
 - List main functionality like:
@@ -159,6 +240,18 @@ for this part, you should analyze the development plan based on the image analys
   - Desktop: > 1024px
   - Layout adjustments per breakpoint
 
+7. Interaction Flows:
+   - Component State Changes:
+     - Initial state
+     - User interaction triggers
+     - State transitions
+     - Animation timings
+   - User Flow Sequences:
+     - Click/tap behaviors
+     - Form submission flows
+     - Error handling
+     - Loading states
+
 ## few-shot examples:
 
 ### example of analysis a picture of a mobile application:
@@ -183,6 +276,9 @@ Mobile web application landing page
 3. Content Sections:
 - The left section contains a large black heading that reads "Create powerful prompts for Cursor, Bolt, v0 & more..".
 - Below the heading, there is a call-to-action button labeled "View Demo" with a rightward arrow icon.
+- The right section contains a form for uploading images and additional information.
+- The form contains an input field for uploading images and a button labeled "Choose image" to select a file.
+- footer contains a list of front-end frameworks logos "react,vue,angular,svelte,etc".
 
 4. Interactive Controls:
 - Intractable elements include the "View Demo" button, the choice of "Desktop applications" for analysis focus, and the "Generate prompt" button.
@@ -200,19 +296,19 @@ Mobile web application landing page
 
 <development_planning>
 1. Project Structure:
-Key page and component folder structure:
-- app/
-  - components/
-    - Header.jsx
-    - Sidebar.jsx
-    - Footer.jsx
-  - pages/
-    - Home.jsx
-    - Instruction.jsx
-    - About.jsx
-    - Contact.jsx
-    - UploadImage.jsx
-    - GeneratePrompt.jsx
+Assuming the project is a web application,and the Key page and component folder structure may be like this:
+app/
+├── components/
+│   ├── Header.jsx
+│   ├── Sidebar.jsx
+│   └── Footer.jsx
+└── pages/
+    ├── Home.jsx
+    ├── Instruction.jsx
+    ├── About.jsx
+    ├── Contact.jsx
+    ├── UploadImage.jsx
+    └── GeneratePrompt.jsx
 
 2. Key Features:
 - Drag and drop image upload functionality
@@ -257,118 +353,240 @@ Key page and component folder structure:
 
 ${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
 
+Use React framework, Create detailed components with these requirements:
+1. Style with Tailwind CSS utility classes for responsive design
+2. Use Lucide React for icons (from lucide-react package). Do NOT use other UI libraries unless requested
+3. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
+4. Create root layout.tsx page that wraps necessary navigation items to all pages
+5. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header
+6. Accurately implement necessary grid layouts
+7. Follow proper import practices:
+   - TO KEEP CODE SIMPLE! I recommend you to write business logic and components in javascript instead of typescript
+   - Use @/ path aliases,and don't forget configure path alias in vite.config.js;
+   - don't forget other needed config files such as postcss.config.mjs,etc.
+   - Keep component imports organized
+   - Don't forget root route (page.jsx) handling
+   - You MUST complete the entire prompt before stopping
+
 <summary_title>
-Web Interface Analysis for UI/UX Design
+AI Chat Interface with Personalized Greeting and Quick Actions Menu
 </summary_title>
 
 <image_analysis>
 1. Navigation Elements:
-- Header: At the top of the page, with four links (Home, Instruction, About, Contact).
-- StyleSheet Title: Positioned below the header, listing different front-end frameworks in a bulleted list.
+   - Left Sidebar:
+     - Position: Fixed left, full height
+     - Width: 64px
+     - Background: white
+     - Icons layout: Vertical, centered
+     - Icons spacing: 24px vertical gap
+     - Icons included (top to bottom):
+       - Plus icon (new chat)
+       - Search icon
+       - Document icon
+       - Clock icon
+       - Settings icon
+       - User profile icon (bottom aligned)
+     - Icon states:
+       - Default: gray-600
+       - Hover: gray-800
+       - Active: purple-600
 
 2. Layout Components:
-- Dimensions and Sizes:
-  - Header: Width 100%, height approximately 150 pixels, centered alignment.
-  - Main Content Area: Width 60%, height 100%, aligned to the left.
-  - Sidebar (Upload Image Pop-up): Width 35%, height 45%, aligned to the right.
-- Key Layout Elements:
-  - Header: Contains navigation links.
-  - Main Content Area: Contains the main text and buttons.
-  - Sidebar: Contains the image upload pop-up.
-- Spacing and Positioning:
-  - Header: Positioned at the top of the page.
-  - Main Content Area: Positioned below the header, taking up a majority of the page's width.
-  - Sidebar: Positioned to the right of the main content area.
+   - Main Content Area:
+     - Position: Margin-left 64px (sidebar width)
+     - Max-width: 768px
+     - Padding: 32px 24px
+     - Background: gray-50
+   - Content Structure:
+     - Header section (greeting)
+     - Prompt suggestions grid
+     - Input section (bottom)
+   - Component spacing:
+     - 32px vertical gap between sections
+     - 16px gap between related elements
 
 3. Content Sections:
-- Main Content Area:
-  - Headline and Subtitle: "Create powerful prompts for Cursor, Bolt, v0 & more..".
-  - Description: A brief description explaining the purpose of the website.
-  - Call-To-Action Button: "View Demo →".
-- Sidebar (Upload Image Pop-up):
-  - Instructions: Text and includes a large upload icon, followed by a text field or label.
-  - Open Close: A button to open or close the pop-up.
-- Footer:
-  - Front-end Frameworks: Summarily listed in the footer section.
+   - Greeting Section:
+     - Title: "Hi there, John"
+       - Font: Inter, 28px, bold
+       - Color: Linear gradient (purple-600 to blue-500)
+     - Subtitle: "What would you like to know?"
+       - Font: Inter, 16px, regular
+       - Color: gray-600
+     - Additional text: "Use one of the most common prompts below or use your own to begin"
+       - Font: Inter, 14px, regular
+       - Color: gray-500
+
+   - Prompt Suggestions:
+     - Grid layout: 2x2 on desktop
+     - Card dimensions: Equal width, auto height
+     - Card styling:
+       - Background: white
+       - Border radius: 8px
+       - Shadow: sm
+       - Padding: 16px
+       - Hover: scale(1.02), shadow-md
+     - Card content:
+       - Icon: 24x24, gray-600
+       - Text: 14px, gray-700
+       - Spacing: 12px between icon and text
+
+   - Input Section:
+     - Input field:
+       - Height: 48px
+       - Background: white
+       - Border radius: 8px
+       - Padding: 12px 16px
+       - Placeholder: "Ask whatever you want...."
+     - Character count:
+       - Position: Absolute right
+       - Font: 14px, gray-500
+     - Action buttons:
+       - Height: 36px
+       - Spacing: 8px between buttons
+       - Icons: 20x20
 
 4. Interactive Controls:
-- List and Input Methods:
-  - Navigation Links: Clickable elements within the header.
-  - Call-To-Action Button: "View Demo →". Contains an arrow as an icon.
-  - Upload Pop-up: Encloses the total area related to image upload function.
+   - Sidebar Icons:
+     - Clickable area: 40x40px
+     - Hover effect: scale(1.05)
+     - Active indicator: Left border purple-600
+   - Prompt Cards:
+     - Hover effect: scale(1.02), shadow-md
+     - Transition: 150ms ease
+     - Cursor: pointer
+   - Input Field:
+     - Focus state: ring-2 ring-purple-500
+     - Character limit: 1000
+   - Action Buttons:
+     - Hover: bg-gray-100
+     - Active: bg-gray-200
+     - Disabled state: opacity-50
 
 5. Colors:
-- Primary Colors:
-  - Header: White background with dark text.
-  - Main Content Area Body: Dull colors overall.
-- Secondary and Accent Colors:
-  - Navigation Links: Blue (in header).
-  - Call-To-Action Buttons: Black background with white text plus arrows as icons.
-- Background and Text Colors:
-  - Background: White or images, muted tone for text to aid readability.
+   - Primary:
+     - Purple: #6B46C1 (purple-600)
+     - Blue: #3B82F6 (blue-500)
+   - Neutral:
+     - Background: #F9FAFB (gray-50)
+     - Text: #111827 (gray-900)
+     - Secondary text: #4B5563 (gray-600)
+   - Accents:
+     - Gradient: linear-gradient(135deg, #6B46C1 0%, #3B82F6 100%)
+   - States:
+     - Hover: opacity-80
+     - Active: opacity-70
+     - Disabled: opacity-50
 
 6. Grid/Layout Structure:
-- Grid System: Not explicitly visible in layout. However, the layout features symmetrical and balanced elements.
-- Spacing Measurements: Two sets of equal space between the header and main content area, the main content area and sidebar item, and overall sufficient spacing allows for functional page allocations.
-- Responsive Breakpoints: Not explicit, but responsive design is implied for a balanced interface possible on various devices.
+   - Page Grid:
+     - Sidebar: Fixed 64px
+     - Main content: Fluid
+   - Content Grid:
+     - Max-width: 768px
+     - Margin: auto
+   - Prompt Cards Grid:
+     - Desktop: grid-cols-4
+     - Tablet: grid-cols-2
+     - Mobile: grid-cols-1
+   - Spacing System:
+     - Base unit: 4px
+     - Common spacing: 8px, 16px, 24px, 32px
+   - Responsive Behavior:
+     - Mobile (<640px):
+       - Single column layout
+       - Collapsed sidebar
+     - Tablet (640px - 1024px):
+       - Two column cards
+       - Visible sidebar
+     - Desktop (>1024px):
+       - Four column cards
+       - Full layout
 
 <development_planning>
 1. Project Structure:
-Key page and component folder structure:
-- app/
-  - components/
-    - Header.jsx
-    - MainContent.jsx
-    - Sidebar.jsx
-  - pages/
-    - Index.jsx
+Assuming the project is a web application,and the Key page and component folder structure may be like this:
+app/
+├── components/
+│   ├── layout/
+│   │   ├── Sidebar.jsx
+│   │   └── Layout.jsx
+│   ├── chat/
+│   │   ├── PromptCard.jsx
+│   │   ├── PromptGrid.jsx
+│   │   ├── ChatInput.jsx
+│   │   └── ChatHeader.jsx
+│   └── shared/
+│       ├── Button.jsx
+│       └── Icon.jsx
+├── pages/
+│   └── Home.jsx
+├── styles/
+│   └── globals.css
 
 2. Key Features:
-- Navigation: Links to different sections.
-- Upload Image Pop-up: for facilitating imagery upload/download for generation.
-- Generate Prompts: fetches a prompt from the generated image.
-- Login Check: Validates the credentials.
-- Sign-Up/Login Interface: Enables users to get new logins.
-- Modal Transition: Includes the 'Log-In Modal' and 'Sign Up Modal'.
+   - Core Features:
+     - Chat interface with AI
+     - Quick prompt suggestions
+     - File attachment support
+   - User Interaction:
+     - Text input with character limit
+     - Prompt card selection
+     - Sidebar navigation
+   - UI/UX Elements:
+     - Responsive layout
+     - Smooth transitions
+     - Loading states
+   - Integration Points:
+     - AI chat API
+     - File upload service
+     - User authentication
 
 3. State Management:
-Data Structure:
-- Login validation: A boolean Flag within a JSON structure to track whether the user could successfully authenticate.
-- Profile: Information structure to store the current user's profile such as role, email, id, etc.
-- Role: A current role assigned to the account.
-- User ID: A unique ID issued for tracking activity.
-- User Status: Optionally true or false to indicate account status.
+   - Global States:
+     - User session
+     - Current chat context
+     - Selected prompt
+   - Local States:
+     - Input field content
+     - Character count
+     - Loading states
+     - UI interactions
 
 4. Routes:
-- Index Page: canvas to view demodesc
-- Generation API: "API.js" for generating prompts based on image data from the app component.
-- Navigation links: Home, Instruction, About, Contact.
-- Login State: "AuthMiddleware.js".
+   - / - Main chat interface
+   - /history - Chat history
+   - /settings - User settings
+   - /profile - User profile
 
 5. Component Architecture:
-Composed of:
- pursuits:
-- "Layout" for head, body and footer
-- Sidebar (including modal handling)
-- Generate Prompt (re-render mechanism)
-- Profile Creation/User Maintenance
-- Front-end Frameworks Documentation
-
-- Login Route components
-- Front-end APIs for images uploading functionality.
+   - Layout (wrapper)
+     - Sidebar (navigation)
+     - MainContent
+       - ChatHeader (greeting)
+       - PromptGrid
+         - PromptCard (x4)
+       - ChatInput
+         - InputField
+         - ActionButtons
+         - CharacterCount
 
 6. Responsive Breakpoints:
-Responsive Design Adjustments:
-- Mobile:
-  - Navigates using header icons in the footer.
-- Tablet:
-  - Icons in icons.
-- Desktop:
-  - Everything appears as normal.
-- Critical Screen Sizes:
-  - Optimizations for structure of sidebar, about, contact pages, etc.
-- UI Adaptations: Without testing structure.
-</development_planning>
+   - Mobile: < 640px
+     - Full width content
+     - Stacked prompt cards
+     - Collapsed sidebar
+   - Tablet: 640px - 1024px
+     - Two column prompt grid
+     - Visible sidebar
+   - Desktop: > 1024px
+     - Four column prompt grid
+     - Full layout
+   - Adjustments:
+     - Font sizes scale down on mobile
+     - Spacing reduces on smaller screens
+     - Touch targets increase on mobile
 `
 }
 
