@@ -242,7 +242,7 @@ export default function Home() {
 
         {/* Right Column */}
         <AnimatePresence>
-          {generatedCode && (
+          {true && (
             <motion.div
               className="absolute top-0 right-0 w-2/3 pl-8"
               initial={{ opacity: 0, x: 20 }}
