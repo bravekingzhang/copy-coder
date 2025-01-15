@@ -1,5 +1,5 @@
-import { memo, useState, useRef } from 'react';
-import { RefreshCw, Smartphone, Monitor } from 'lucide-react';
+import { memo, useState, useRef, useEffect } from 'react';
+import { RefreshCw, Smartphone, Monitor, Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   ImperativePanelHandle,
@@ -23,6 +23,8 @@ const Preview = memo(({ serverUrl }: PreviewProps) => {
   const rightPanelRef = useRef<ImperativePanelHandle>(null);
   const isLeftResizing = useRef(false);
   const isRightResizing = useRef(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
 
   const handleRefresh = () => {
     setKey(prev => prev + 1);
@@ -67,8 +69,30 @@ const Preview = memo(({ serverUrl }: PreviewProps) => {
     }
   };
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      previewContainerRef.current?.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
+
+  // Add fullscreen change event listener
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col" ref={previewContainerRef}>
       {/* 工具栏 */}
       <div className="p-2 border-b flex items-center gap-2">
         <Button variant="ghost" size="sm" onClick={handleRefresh}>
@@ -81,6 +105,14 @@ const Preview = memo(({ serverUrl }: PreviewProps) => {
           onClick={toggleDevice}
         >
           {isMobile ? <Monitor className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
+        </Button>
+        <div className="border-l mx-2 h-4" />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleFullscreen}
+        >
+          {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
         </Button>
       </div>
 
