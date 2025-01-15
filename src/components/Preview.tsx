@@ -43,15 +43,16 @@ const Preview = memo(({ serverUrl }: PreviewProps) => {
   };
 
   const handleLeftPanelResize = (size: number) => {
-    if (isRightResizing.current) return;
+    // if (isRightResizing.current) return;
 
-    try {
-      isLeftResizing.current = true;
-      setSideSize(size);
-      syncPanelSize(size, rightPanelRef);
-    } finally {
-      isLeftResizing.current = false;
-    }
+    // try {
+    //   isLeftResizing.current = true;
+    //   // setSideSize(size);
+    //   syncPanelSize(size, rightPanelRef);
+    // } finally {
+    //   isLeftResizing.current = false;
+    // }
+    setSideSize(size);
   };
 
   const handleRightPanelResize = (size: number) => {
@@ -101,7 +102,7 @@ const Preview = memo(({ serverUrl }: PreviewProps) => {
           </ResizablePanel>
 
           {/* 左侧拖动手柄 */}
-          <ResizableHandle withHandle />
+          <ResizableHandle />
 
           {/* 预览内容 */}
           <ResizablePanel>
