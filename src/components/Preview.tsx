@@ -32,7 +32,7 @@ const Preview = memo(({ serverUrl }: PreviewProps) => {
 
   const toggleDevice = () => {
     setIsMobile(prev => !prev);
-    const newSize = !isMobile ? 35 : 0;
+    const newSize = !isMobile ? 30 : 0;
     setSideSize(newSize);
     requestAnimationFrame(() => {
       leftPanelRef.current?.resize(newSize);

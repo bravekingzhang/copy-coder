@@ -10,13 +10,14 @@ export const getSystemAnalysisPrompt = (applicationType: string) => {
   const RESPONSE_PREFIX_FULL_STACK = `Use Next.js framework, Create detailed components with these requirements:
 1. Use 'use client' directive for client-side components
 2. Style with Tailwind CSS utility classes for responsive design
-3. Use Lucide React for icons (from lucide-react package). Do NOT use other UI libraries unless requested
-4. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
-5. Configure next.config.js image remotePatterns to enable stock photos from picsum.photos
-6. Create root layout.tsx page that wraps necessary navigation items to all pages
-7. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header if it exists
-8. Accurately implement necessary grid layouts
-9. Follow proper import practices:
+3. Use Lucide React for icons (from lucide-react package). and you must use existing icons in the library, do not create new icons
+4. Do NOT use other UI libraries unless requested
+5. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
+6. Configure next.config.js image remotePatterns to enable stock photos from picsum.photos
+7. Create root layout.tsx page that wraps necessary navigation items to all pages
+8. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header if it exists
+9. Accurately implement necessary grid layouts
+10. Follow proper import practices:
    - TO KEEP CODE SIMPLE! I recommend you to write business logic and components in javascript instead of typescript,components and pages use jsx instead of tsx
    - Use @/ path aliases,and don't forget configure in tsconfig.json;
    - don't forget other needed config files such as postcss.config.mjs,etc.
@@ -28,12 +29,13 @@ export const getSystemAnalysisPrompt = (applicationType: string) => {
 
 const RESPONSE_PREFIX_FRONTEND = `Use React framework, Create detailed components with these requirements:
 1. Style with Tailwind CSS utility classes for responsive design
-2. Use Lucide React for icons (from lucide-react package). Do NOT use other UI libraries unless requested
-3. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
-4. Create root layout.tsx page that wraps necessary navigation items to all pages
-5. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header if it exists
-6. Accurately implement necessary grid layouts
-7. Follow proper import practices:
+2. Use Lucide React for icons (from lucide-react package). and you must use existing icons in the library, do not create new icons
+3. Do NOT use other UI libraries unless requested
+4. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
+5. Create root layout.tsx page that wraps necessary navigation items to all pages
+6. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header if it exists
+7. Accurately implement necessary grid layouts
+8. Follow proper import practices:
    - TO KEEP CODE SIMPLE! I recommend you to write business logic and components in javascript instead of typescript
    - Use @/ path aliases,and don't forget configure path alias in vite.config.js;
    - don't forget other needed config files such as postcss.config.mjs,etc.
@@ -983,12 +985,16 @@ Here are some examples of correct usage of artifacts:
         <boltAction type="file" filePath="vite.config.js">
           import { defineConfig } from 'vite'
           import react from '@vitejs/plugin-react'
-
-          // https://vite.dev/config/
+          import path from 'path';
+          // https://vitejs.dev/config/
           export default defineConfig({
             plugins: [react()],
+            resolve: {
+              alias: {
+                '@': path.resolve(__dirname, './src'),
+              },
+            },
           })
-
         </boltAction>
 
         <boltAction type="file" filePath="tailwind.config.js">
