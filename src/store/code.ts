@@ -90,8 +90,7 @@ export const useCodeStore = create<CodeState>((set, get) => ({
 
   initWebContainer: async () => {
     if (!get().webcontainer) {
-      const container = await WebContainer.boot()
-
+      const container = await WebContainer.boot({ workdirName: 'projects', coep: 'credentialless' })
       // 监听服务启动事件
       container.on('server-ready', (port, url) => {
         get().setServerUrl(url)
