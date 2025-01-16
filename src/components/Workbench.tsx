@@ -297,8 +297,8 @@ const Workbench = () => {
                     {selectedFile && files[selectedFile] ? (
                       <CodeMirror
                         value={files[selectedFile]}
-                        height="100%"
                         className="h-full w-full"
+                        height="95%"
                         theme={oneDark}
                         extensions={[getLanguageExtension(selectedFile)]}
                         basicSetup={{
