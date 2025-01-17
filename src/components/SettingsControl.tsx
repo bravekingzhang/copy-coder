@@ -2,11 +2,13 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { ApplicationFramework, FRAMEWORK_LABELS } from "@/types/application";
+
 interface SettingsControlProps {
-  applicationType: string;
+  applicationType: ApplicationFramework;
   temperature: number;
   codeWithImage: boolean;
-  onApplicationTypeChange: (value: string) => void;
+  onApplicationTypeChange: (value: ApplicationFramework) => void;
   onTemperatureChange: (value: number) => void;
   onCodeWithImageChange: (value: boolean) => void;
 }
@@ -29,8 +31,11 @@ const SettingsControl = ({
             <SelectValue placeholder="Select technology stack" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="full-stack">Full Stack</SelectItem>
-            <SelectItem value="frontend">Absolute Frontend</SelectItem>
+            {Object.entries(FRAMEWORK_LABELS).map(([key, label]) => (
+              <SelectItem key={key} value={key}>
+                {label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

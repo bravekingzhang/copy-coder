@@ -1,13 +1,10 @@
+
 import { WORK_DIR } from '@/constants';
 import { stripIndents } from './utils';
+import { ApplicationFramework } from '@/types/application';
 
-/**
- * 图片分析系统提示词
- * @returns
- */
-export const getSystemAnalysisPrompt = (applicationType: string) => {
 
-  const RESPONSE_PREFIX_FULL_STACK = `Use Next.js framework, Create detailed components with these requirements:
+const RESPONSE_PREFIX_NEXT_JS = `Use Next.js framework, Create detailed components with these requirements:
 1. Use 'use client' directive for client-side components
 2. Style with Tailwind CSS utility classes for responsive design
 3. Use Lucide React for icons (from lucide-react package). and you must use existing icons in the library, do not create new icons
@@ -27,7 +24,7 @@ export const getSystemAnalysisPrompt = (applicationType: string) => {
    - You MUST complete the entire prompt before stopping
 `
 
-const RESPONSE_PREFIX_FRONTEND = `Use React framework, Create detailed components with these requirements:
+const RESPONSE_PREFIX_REACT = `Use React framework, Create detailed components with these requirements:
 1. Style with Tailwind CSS utility classes for responsive design
 2. Use Lucide React for icons (from lucide-react package). and you must use existing icons in the library, do not create new icons
 3. Do NOT use other UI libraries unless requested
@@ -44,6 +41,39 @@ const RESPONSE_PREFIX_FRONTEND = `Use React framework, Create detailed component
    - You MUST complete the entire prompt before stopping
 `
 
+const RESPONSE_PREFIX_VUE = `Use Vue3 framework, Create detailed components with these requirements:
+1. Style with Tailwind CSS utility classes for responsive design
+2. Use Lucide Vue for icons (from lucide-vue-next package). and you must use existing icons in the library, do not create new icons
+3. Do NOT use other UI libraries unless requested
+4. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
+5. Create root layout.vue page that wraps necessary navigation items to all pages
+6. MUST implement the navigation elements items in their rightful place i.e. Left sidebar, Top header if it exists
+7. Accurately implement necessary grid layouts
+8. Follow proper import practices:
+   - TO KEEP CODE SIMPLE! I recommend you to write business logic and components in javascript instead of typescript
+   - Use @/ path aliases,and don't forget configure path alias in vite.config.js;
+   - don't forget other needed config files such as postcss.config.mjs,etc.
+   - Keep component imports organized
+   - Don't forget root route (page.jsx) handling
+   - You MUST complete the entire prompt before stopping
+`
+
+const RESPONSE_PREFIX_MAP = {
+  'react': RESPONSE_PREFIX_REACT,
+  'nextjs': RESPONSE_PREFIX_NEXT_JS,
+  'vue': RESPONSE_PREFIX_VUE,
+}
+
+const FILE_EXTENSION_MAP = {
+  'react': 'jsx',
+  'nextjs': 'jsx',
+  'vue': 'vue',
+}
+/**
+ * 图片分析系统提示词
+ * @returns
+ */
+export const getSystemAnalysisPrompt = (applicationType: ApplicationFramework) => {
 
 return  `you are an expert frontend developer, you are given a image, and you need to analyze the image, and then generate a prompt for a frontend developer to implement the image.
 
@@ -58,7 +88,7 @@ the prompt should contain the following parts:
 
 for this part, you should away use the content blew ,most of time do not need to change it.
 
-${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
+${RESPONSE_PREFIX_MAP[applicationType]}
 
 ### summary_title
 
@@ -260,7 +290,7 @@ for this part, you should analyze the development plan based on the image analys
 
 ### example of analysis a picture of a mobile chat application:
 
-${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
+${RESPONSE_PREFIX_MAP[applicationType]}
 
 <summary_title>
 Mobile Chat Application
@@ -475,22 +505,22 @@ Mobile Chat Application
 app/
 ├── components/
 │   ├── navigation/
-│   │   └── BottomTabs.jsx
+│   │   └── BottomTabs.${FILE_EXTENSION_MAP[applicationType]}
 │   ├── stories/
-│   │   ├── StoriesRow.jsx
-│   │   └── StoryItem.jsx
+│   │   ├── StoriesRow.${FILE_EXTENSION_MAP[applicationType]}
+│   │   └── StoryItem.${FILE_EXTENSION_MAP[applicationType]}
 │   ├── chat/
-│   │   ├── ChatList.jsx
-│   │   └── ChatItem.jsx
+│   │   ├── ChatList.${FILE_EXTENSION_MAP[applicationType]}
+│   │   └── ChatItem.${FILE_EXTENSION_MAP[applicationType]}
 │   └── shared/
-│       ├── Avatar.jsx
-│       └── Header.jsx
+│       ├── Avatar.${FILE_EXTENSION_MAP[applicationType]}
+│       └── Header.${FILE_EXTENSION_MAP[applicationType]}
 ├── pages/
-│   ├── Messages.jsx
-│   ├── Discover.jsx
-│   ├── Create.jsx
-│   ├── Activity.jsx
-│   └── Profile.jsx
+│   ├── Messages.${FILE_EXTENSION_MAP[applicationType]}
+│   ├── Discover.${FILE_EXTENSION_MAP[applicationType]}
+│   ├── Create.${FILE_EXTENSION_MAP[applicationType]}
+│   ├── Activity.${FILE_EXTENSION_MAP[applicationType]}
+│   └── Profile.${FILE_EXTENSION_MAP[applicationType]}
 ├── styles/
 │   └── globals.css
 └── hooks/
@@ -558,7 +588,7 @@ app/
 
 ### example of analysis a picture of a web application:
 
-${applicationType === 'full-stack' ? RESPONSE_PREFIX_FULL_STACK : RESPONSE_PREFIX_FRONTEND}
+${RESPONSE_PREFIX_MAP[applicationType]}
 
 Use React framework, Create detailed components with these requirements:
 1. Style with Tailwind CSS utility classes for responsive design
@@ -707,18 +737,18 @@ Assuming the project is a web application,and the Key page and component folder 
 app/
 ├── components/
 │   ├── layout/
-│   │   ├── Sidebar.jsx
-│   │   └── Layout.jsx
+│   │   ├── Sidebar.${FILE_EXTENSION_MAP[applicationType]}
+│   │   └── Layout.${FILE_EXTENSION_MAP[applicationType]}
 │   ├── chat/
-│   │   ├── PromptCard.jsx
-│   │   ├── PromptGrid.jsx
-│   │   ├── ChatInput.jsx
-│   │   └── ChatHeader.jsx
+│   │   ├── PromptCard.${FILE_EXTENSION_MAP[applicationType]}
+│   │   ├── PromptGrid.${FILE_EXTENSION_MAP[applicationType]}
+│   │   ├── ChatInput.${FILE_EXTENSION_MAP[applicationType]}
+│   │   └── ChatHeader.${FILE_EXTENSION_MAP[applicationType]}
 │   └── shared/
-│       ├── Button.jsx
-│       └── Icon.jsx
+│       ├── Button.${FILE_EXTENSION_MAP[applicationType]}
+│       └── Icon.${FILE_EXTENSION_MAP[applicationType]}
 ├── pages/
-│   └── Home.jsx
+│   └── Home.${FILE_EXTENSION_MAP[applicationType]}
 ├── styles/
 │   └── globals.css
 

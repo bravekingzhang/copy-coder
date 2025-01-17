@@ -13,6 +13,8 @@ import CollapsibleSettings from "@/components/CollapsibleSettings";
 import ImageUploader from "@/components/ImageUploader";
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion";
+import { ApplicationFramework } from "@/types/application";
+
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -20,7 +22,7 @@ export default function Home() {
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
-  const [applicationType, setApplicationType] = useState("frontend");
+  const [applicationType, setApplicationType] = useState<ApplicationFramework>("react");
   const [temperature, setTemperature] = useState(0.2);
   const [codeWithImage, setCodeWithImage] = useState(false);
   const [promptCopiedText, copyPromptToClipboard] = useCopyToClipboard();
@@ -170,7 +172,7 @@ export default function Home() {
         {/* Left Column */}
         <motion.div
           layout
-          className={`${generatedCode ? 'w-1/3' : 'max-w-3xl w-full'}`}
+          className={`${generatedCode ? 'w-1/4' : 'max-w-3xl w-full'}`}
           transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
         >
           {/* Upload Section */}
@@ -244,7 +246,7 @@ export default function Home() {
         <AnimatePresence>
           {generatedCode && (
             <motion.div
-              className="absolute top-0 right-0 w-2/3 pl-8"
+              className="absolute top-0 right-0 w-3/4 pl-8"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}

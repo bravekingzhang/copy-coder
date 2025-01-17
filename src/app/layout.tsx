@@ -36,7 +36,7 @@ export default function RootLayout({
 
           {/* Main Content */}
           <main className="flex-1 pt-16">
-            <div className="container mx-auto p-6">
+            <div className="mx-auto p-6">
               {children}
             </div>
           </main>

@@ -1,11 +1,11 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import SettingsControl from "@/components/SettingsControl"
-
+import { ApplicationFramework } from "@/types/application"
 interface CollapsibleSettingsProps {
-  applicationType: string
+  applicationType: ApplicationFramework
   temperature: number
   codeWithImage: boolean
-  onApplicationTypeChange: (value: string) => void
+  onApplicationTypeChange: (value: ApplicationFramework) => void
   onTemperatureChange: (value: number) => void
   onCodeWithImageChange: (value: boolean) => void
 }

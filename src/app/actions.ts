@@ -1,8 +1,10 @@
 'use server'
 
 import { generatePrompt, generateCode } from '@/lib/llmService'
+import { ApplicationFramework } from '@/types/application'
 
-export async function generatePromptAction(base64Image: string, applicationType: string, temperature: number = 0.2) {
+
+export async function generatePromptAction(base64Image: string, applicationType: ApplicationFramework, temperature: number = 0.2) {
   try {
     // Extract base64 data from the data URL
     const base64Data = base64Image.split(',')[1]
