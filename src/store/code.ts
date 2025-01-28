@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { WebContainer,WebContainerProcess } from '@webcontainer/api'
 import { Terminal } from 'xterm'
+
 interface FileContent {
   type: 'file'
   filePath: string
@@ -155,18 +156,28 @@ export const useCodeStore = create<CodeState>((set, get) => ({
   },
 
   clearState: async () => {
-    const { webcontainer, files } = get();
+    const { webcontainer, files, terminal, shellProcess } = get();
 
-    console.log('clearState', webcontainer, files)
-    // 清理 store 中的文件记录
-    set({ files: {}, actions: [], serverUrl: null });
+    // 清理终端
+    if (terminal) {
+      terminal.clear();
+      terminal.write('\x1bc'); // 发送清屏命令
+    }
 
     // 清理 shell 进程
-    if(webcontainer && get().shellProcess !== null){
-      get().shellProcess?.kill();
-      set({ shellProcess: null })
+    if (shellProcess) {
+      await shellProcess.kill();
     }
-    // 清理 webcontainer 中的文件
+
+    // 清理 store 状态
+    set({
+      files: {},
+      actions: [],
+      serverUrl: null,
+      shellProcess: null
+    });
+
+    // 清理文件
     if (webcontainer && Object.keys(files).length > 0) {
       for (const filePath of Object.keys(files)) {
         try {

@@ -36,6 +36,16 @@ export default function Home() {
     }
   }, [generatedPrompt]);
 
+  useEffect(() => {
+    if (useCodeStore.getState().isWebcontainerReady && useCodeStore.getState().webcontainer) {
+      // 等待一小段时间确保 WebContainer 完全初始化
+      const timer = setTimeout(() => {
+        useCodeStore.getState().initWebContainer();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   const handleGeneratePrompt = useCallback(async () => {
     if (!selectedImage) return;
 
