@@ -101,7 +101,7 @@ export default function Home() {
       if (stream) {
         for await (const chunk of stream) {
           const content = chunk.choices[0]?.delta?.content || "";
-
+          // console.log(content)
           // 累积内容
           currentAction += content;
 

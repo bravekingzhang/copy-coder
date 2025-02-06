@@ -1041,12 +1041,27 @@ Here are some examples of correct usage of artifacts:
           }
         </boltAction>
 
-        <boltAction type="file" filePath="postcss.config.js">
-          ...
+        <boltAction type="file" filePath="postcss.config.mjs">
+         /** @type {import('postcss-load-config').Config} */
+          const config = {
+            plugins: {
+              tailwindcss: {},
+            },
+          };
+          export default config;
         </boltAction>
 
         <boltAction type="file" filePath="index.html">
-          ...
+          import React from 'react';
+          import ReactDOM from 'react-dom/client';
+          import Home from '@/pages/Home';// use relative path to import the Home component
+          import '@/styles/globals.css' // use relative path to import the globals.css file
+
+          ReactDOM.createRoot(document.getElementById('root')).render(
+            <React.StrictMode>
+              <Home />
+            </React.StrictMode>,
+          )
         </boltAction>
 
         <boltAction type="file" filePath="src/main.jsx">
