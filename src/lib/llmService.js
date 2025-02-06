@@ -1,5 +1,7 @@
 import OpenAI from 'openai'
 import { getSystemAnalysisPrompt, getSystemCodePrompt } from './prompts'
+import { HttpsProxyAgent } from 'https-proxy-agent'
+
 const openai = new OpenAI({
   apiKey: process.env.VISION_API_KEY,
   baseURL: process.env.VISION_BASE_URL,
@@ -20,6 +22,10 @@ if (useVisionModelCode) {
     baseURL: process.env.CHAT_BASE_URL,
   })
   console.log(`use isolated code model: ${process.env.CHAT_MODEL}`)
+}
+
+if(process.env.HTTPS_PROXY){
+  openaiCode.httpAgent = new HttpsProxyAgent(process.env.HTTPS_PROXY)
 }
 
 export async function generatePrompt( base64Image, applicationType, temperature = 0.2) {
