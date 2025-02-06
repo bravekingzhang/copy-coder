@@ -84,6 +84,9 @@ USE_VISION_MODEL_CODE=false
 CHAT_BASE_URL=https://api.deepseek.com/v1
 CHAT_API_KEY=your_deepseek_api_key
 CHAT_MODEL=deepseek-chat
+
+# 代理, 如果需要代理，请配置代理地址，否则不需要配置
+HTTPS_PROXY=http://127.0.0.1:7890
 ```
 
 4. Run the development server:
