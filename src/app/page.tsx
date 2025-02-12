@@ -4,8 +4,9 @@ import { Copy, Check } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { generatePromptAction, generateCodeAction } from "./actions";
 import { Button } from "@/components/ui/button";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import CodeMirror from "@uiw/react-codemirror";
+import { markdown } from "@codemirror/lang-markdown";
+import { oneDark } from "@codemirror/theme-one-dark";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useCodeStore } from "@/store/code";
 import Workbench from "@/components/Workbench";
@@ -14,7 +15,7 @@ import ImageUploader from "@/components/ImageUploader";
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion";
 import { ApplicationFramework } from "@/types/application";
-
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -182,15 +183,27 @@ export default function Home() {
         {/* Left Column */}
         <motion.div
           layout
-          className={`${generatedCode ? 'w-1/4' : 'max-w-3xl w-full'}`}
+          className={`${generatedCode ? 'w-1/4' : 'max-w-5xl w-full'}`}
           transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
         >
           {/* Upload Section */}
-          <ImageUploader
-            selectedImage={selectedImage}
-            onImageSelect={setSelectedImage}
-            onImageRemove={removeImage}
-          />
+          <Accordion type="single" collapsible>
+            <AccordionItem value="image-uploader">
+              <AccordionTrigger className="flex gap-2">
+                <span>Image Upload</span>
+                <span className="text-xs text-muted-foreground ml-2">
+                  {selectedImage ? "(Image uploaded)" : "(Click to upload)"}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ImageUploader
+                  selectedImage={selectedImage}
+                  onImageSelect={setSelectedImage}
+                  onImageRemove={removeImage}
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           {/* Settings Section */}
           <CollapsibleSettings
@@ -230,13 +243,38 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <div
-                ref={promptContainerRef}
-                className="bg-gray-50 rounded-lg p-4 h-[200px] overflow-y-auto"
-              >
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {generatedPrompt || "*Prompt will appear here*"}
-                </ReactMarkdown>
+              <div className="h-[400px] overflow-hidden rounded-lg border">
+                <CodeMirror
+                  value={generatedPrompt || "*Prompt will appear here*"}
+                  height="400px"
+                  theme={oneDark}
+                  extensions={[markdown()]}
+                  onChange={(value) => setGeneratedPrompt(value)}
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLineGutter: true,
+                    highlightSpecialChars: true,
+                    foldGutter: true,
+                    drawSelection: true,
+                    dropCursor: true,
+                    allowMultipleSelections: true,
+                    indentOnInput: true,
+                    bracketMatching: true,
+                    closeBrackets: true,
+                    autocompletion: true,
+                    rectangularSelection: true,
+                    crosshairCursor: true,
+                    highlightActiveLine: true,
+                    highlightSelectionMatches: true,
+                    closeBracketsKeymap: true,
+                    defaultKeymap: true,
+                    searchKeymap: true,
+                    historyKeymap: true,
+                    foldKeymap: true,
+                    completionKeymap: true,
+                    lintKeymap: true,
+                  }}
+                />
               </div>
               {/* 生成代码按钮 */}
               <div className="w-full justify-end">
