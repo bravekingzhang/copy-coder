@@ -22,6 +22,7 @@ interface CodeState {
   isWebcontainerReady: boolean
   serverUrl: string | null
   actions: BoltAction[]
+  buildErrors: string[]
   addFile: (path: string, content: string) => void
   executeShellCommand: (command: string) => Promise<void>
   initWebContainer: () => Promise<void>
@@ -30,6 +31,8 @@ interface CodeState {
   terminal: Terminal | null
   setTerminal: (terminal: Terminal) => void
   clearState: () => Promise<void>
+  addBuildError: (error: string) => void
+  clearBuildErrors: () => void
 }
 
 export const useCodeStore = create<CodeState>((set, get) => ({
@@ -40,6 +43,17 @@ export const useCodeStore = create<CodeState>((set, get) => ({
   serverUrl: null,
   actions: [],
   terminal: null,
+  buildErrors: [],
+
+  addBuildError: (error: string) => {
+    set((state) => ({
+      buildErrors: [...state.buildErrors, error]
+    }))
+  },
+
+  clearBuildErrors: () => {
+    set({ buildErrors: [] })
+  },
 
   setServerUrl: (url: string) => {
     set({ serverUrl: url })
@@ -68,6 +82,11 @@ export const useCodeStore = create<CodeState>((set, get) => ({
         const writableStream = new WritableStream({
           write(data) {
             terminal.write(data)
+            // 检查错误信息
+            const errorPattern = /(?:Failed to resolve import|Error:|error:|Cannot find module|Module not found|Syntax error|TypeError|ReferenceError)/i
+            if (errorPattern.test(data)) {
+              get().addBuildError(data)
+            }
           },
         })
         shell.output.pipeTo(writableStream)
@@ -90,14 +109,57 @@ export const useCodeStore = create<CodeState>((set, get) => ({
   },
 
   initWebContainer: async () => {
-    if (!get().webcontainer) {
-      const container = await WebContainer.boot({ workdirName: 'projects', coep: 'credentialless' })
+    const state = get();
+
+    // 如果已经有一个运行中的 WebContainer，先清理它
+    if (state.webcontainer) {
+      // 清理所有运行中的进程
+      if (state.shellProcess) {
+        await state.shellProcess.kill();
+      }
+
+      // 清理所有文件
+      const files = Object.keys(state.files);
+      if (files.length > 0) {
+        for (const filePath of files) {
+          try {
+            await state.webcontainer.fs.rm(filePath, { force: true, recursive: true });
+          } catch (error) {
+            console.error(`Failed to remove file ${filePath}:`, error);
+          }
+        }
+      }
+
+      // 重置状态
+      set({
+        webcontainer: null,
+        shellProcess: null,
+        isWebcontainerReady: false,
+        serverUrl: null,
+        files: {},
+        actions: [],
+        buildErrors: []
+      });
+    }
+
+    try {
+      // 启动新的 WebContainer 实例
+      const container = await WebContainer.boot({ workdirName: 'projects', coep: 'credentialless' });
+
       // 监听服务启动事件
       container.on('server-ready', (port, url) => {
-        get().setServerUrl(url)
-      })
+        get().setServerUrl(url);
+      });
 
-      set({ webcontainer: container, isWebcontainerReady: true })
+      set({ webcontainer: container, isWebcontainerReady: true });
+    } catch (error) {
+      console.error('Failed to boot WebContainer:', error);
+      set({
+        webcontainer: null,
+        isWebcontainerReady: false,
+        serverUrl: null
+      });
+      throw error; // 重新抛出错误以便上层处理
     }
   },
 
@@ -174,7 +236,8 @@ export const useCodeStore = create<CodeState>((set, get) => ({
       files: {},
       actions: [],
       serverUrl: null,
-      shellProcess: null
+      shellProcess: null,
+      buildErrors: []
     });
 
     // 清理文件
