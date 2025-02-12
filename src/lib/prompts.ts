@@ -54,7 +54,7 @@ const RESPONSE_PREFIX_VUE = `Use Vue3 framework, Create detailed components with
    - Use @/ path aliases,and don't forget configure path alias in vite.config.js;
    - don't forget other needed config files such as postcss.config.mjs,etc.
    - Keep component imports organized
-   - Don't forget root route (page.jsx) handling
+   - Don't forget root route handling
    - You MUST complete the entire prompt before stopping
 `
 
