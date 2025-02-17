@@ -10,6 +10,7 @@ import {
   Terminal as TerminalIcon,
   Code,
   Globe,
+  Download,
 } from "lucide-react";
 import type { TerminalWrapperProps } from "./TerminalWrapper";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -25,8 +26,8 @@ import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
 import JSZip from "jszip";
+import { toast } from "sonner";
 
 type TabType = "code" | "preview";
 
@@ -262,6 +263,24 @@ const Workbench = () => {
       console.error('Failed to update file:', error);
     }
   }, [selectedFile, webcontainer, isWebcontainerReady]);
+
+  // 处理保存快捷键
+  useEffect(() => {
+    const handleSave = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        if (selectedFile && files[selectedFile]) {
+          handleCodeChange(files[selectedFile]);
+          toast.success("File saved", {
+            description: selectedFile,
+          });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleSave);
+    return () => window.removeEventListener('keydown', handleSave);
+  }, [selectedFile, files, handleCodeChange]);
 
   const handlePanelResize = useCallback(() => {
     window.dispatchEvent(new Event("resize"));
