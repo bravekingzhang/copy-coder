@@ -24,10 +24,19 @@ import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
-import { oneDark } from "@codemirror/theme-one-dark";
 import { Button } from "@/components/ui/button";
 import JSZip from "jszip";
 import { toast } from "sonner";
+import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
+import { lintKeymap } from '@codemirror/lint';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+import { syntaxHighlighting, bracketMatching, foldGutter, indentOnInput } from '@codemirror/language';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
+import { keymap, EditorView } from '@codemirror/view';
+import { HighlightStyle } from '@codemirror/language';
+import { tags } from '@lezer/highlight';
+import { oneDark } from '@codemirror/theme-one-dark';
 
 type TabType = "code" | "preview";
 
@@ -229,18 +238,89 @@ const Workbench = () => {
   // 添加文件扩展名到语言的映射函数
   const getLanguageExtension = (filename: string) => {
     const ext = filename.split(".").pop()?.toLowerCase();
+    const customTheme = EditorView.theme({
+      '&': {
+        backgroundColor: '#282c34',
+        color: '#abb2bf',
+        height: '100%'
+      },
+      '.cm-content': {
+        caretColor: '#528bff',
+        fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
+        fontSize: '14px',
+        lineHeight: '1.6'
+      },
+      '.cm-cursor': {
+        borderLeftColor: '#528bff'
+      },
+      '.cm-activeLine': {
+        backgroundColor: '#2c313a'
+      },
+      '.cm-gutters': {
+        backgroundColor: '#282c34',
+        color: '#636d83',
+        border: 'none'
+      },
+      '.cm-activeLineGutter': {
+        backgroundColor: '#2c313a'
+      },
+      '.cm-selectionMatch': {
+        backgroundColor: '#3e4451'
+      }
+    });
+
+    const customHighlightStyle = EditorView.baseTheme({
+      '&.cm-focused .cm-matchingBracket': {
+        backgroundColor: '#3e4451',
+        color: '#c5c8c6'
+      }
+    });
+
+    const syntaxTheme = syntaxHighlighting(HighlightStyle.define([
+      { tag: tags.keyword, color: '#c678dd' },
+      { tag: tags.string, color: '#98c379' },
+      { tag: tags.comment, color: '#5c6370', fontStyle: 'italic' },
+      { tag: tags.function(tags.variableName), color: '#61afef' },
+      { tag: tags.definition(tags.propertyName), color: '#e06c75' },
+      { tag: tags.number, color: '#d19a66' },
+      { tag: tags.operator, color: '#56b6c2' },
+      { tag: tags.typeName, color: '#e5c07b' },
+      { tag: tags.className, color: '#e5c07b' },
+    ]));
+
+    const baseExtensions = [
+      customTheme,
+      customHighlightStyle,
+      syntaxTheme,
+      autocompletion(),
+      indentOnInput(),
+      bracketMatching(),
+      closeBrackets(),
+      history(),
+      highlightSelectionMatches(),
+      foldGutter(),
+      keymap.of([
+        ...defaultKeymap,
+        ...completionKeymap,
+        ...closeBracketsKeymap,
+        ...searchKeymap,
+        ...historyKeymap,
+        ...lintKeymap,
+      ]),
+    ];
+
     switch (ext) {
       case "js":
       case "jsx":
       case "ts":
       case "tsx":
-        return javascript({ jsx: true, typescript: true });
+        return [javascript({ jsx: true, typescript: true }), ...baseExtensions];
       case "html":
-        return html();
+        return [html(), ...baseExtensions];
       case "css":
-        return css();
+        return [css(), ...baseExtensions];
       default:
-        return javascript();
+        return [javascript(), ...baseExtensions];
     }
   };
 
@@ -287,7 +367,7 @@ const Workbench = () => {
   }, []);
 
   return (
-    <div className="h-[800px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
+    <div className="h-[900px] grid grid-cols-12 gap-4 bg-white rounded-xl border border-gray-200 p-4">
       {/* 文件浏览器 */}
       <div className="col-span-3 border-r border-gray-200 overflow-y-auto">
         <div className="font-semibold mb-4 flex items-center gap-2">
@@ -343,7 +423,7 @@ const Workbench = () => {
                         className="h-full w-full"
                         height="95%"
                         theme={oneDark}
-                        extensions={[getLanguageExtension(selectedFile)]}
+                        extensions={getLanguageExtension(selectedFile)}
                         onChange={handleCodeChange}
                         basicSetup={{
                           lineNumbers: true,
@@ -361,13 +441,6 @@ const Workbench = () => {
                           crosshairCursor: true,
                           highlightActiveLine: true,
                           highlightSelectionMatches: true,
-                          closeBracketsKeymap: true,
-                          defaultKeymap: true,
-                          searchKeymap: true,
-                          historyKeymap: true,
-                          foldKeymap: true,
-                          completionKeymap: true,
-                          lintKeymap: true,
                         }}
                       />
                     ) : (

@@ -328,10 +328,10 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <div className="h-[400px] overflow-hidden rounded-lg border">
+              <div className="h-[600px] overflow-hidden rounded-lg border">
                 <CodeMirror
                   value={generatedPrompt || "*Prompt will appear here*"}
-                  height="400px"
+                  height="600px"
                   theme={oneDark}
                   extensions={[markdown()]}
                   onChange={(value) => setGeneratedPrompt(value)}
