@@ -136,6 +136,10 @@ const Workbench = () => {
                   toggleDirectory(node);
                 } else {
                   setSelectedFile(node.path);
+                  // 如果当前不在代码视图，自动切换到代码视图
+                  if (activeTab !== "code") {
+                    setActiveTab("code");
+                  }
                 }
               }}
             >
