@@ -243,6 +243,26 @@ const Workbench = () => {
     }
   };
 
+  // 处理代码编辑
+  const handleCodeChange = useCallback(async (value: string) => {
+    if (!selectedFile || !webcontainer || !isWebcontainerReady) return;
+
+    try {
+      // 更新 store 中的文件内容
+      useCodeStore.getState().addFile(selectedFile, value);
+
+      // 更新 webcontainer 中的文件
+      // 确保目录存在
+      const dirPath = selectedFile.split('/').slice(0, -1).join('/');
+      if (dirPath) {
+        await webcontainer.fs.mkdir(dirPath, { recursive: true });
+      }
+      await webcontainer.fs.writeFile(selectedFile, value);
+    } catch (error) {
+      console.error('Failed to update file:', error);
+    }
+  }, [selectedFile, webcontainer, isWebcontainerReady]);
+
   const handlePanelResize = useCallback(() => {
     window.dispatchEvent(new Event("resize"));
   }, []);
@@ -305,6 +325,7 @@ const Workbench = () => {
                         height="95%"
                         theme={oneDark}
                         extensions={[getLanguageExtension(selectedFile)]}
+                        onChange={handleCodeChange}
                         basicSetup={{
                           lineNumbers: true,
                           highlightActiveLineGutter: true,
