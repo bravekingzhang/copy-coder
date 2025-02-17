@@ -7,7 +7,7 @@ import { ApplicationFramework } from '@/types/application';
 const RESPONSE_PREFIX_NEXT_JS = `Use Next.js framework, Create detailed components with these requirements:
 1. Use 'use client' directive for client-side components
 2. Style with Tailwind CSS utility classes for responsive design
-3. Use Lucide React for icons (from lucide-react package). and you must use existing icons in the library, do not create new icons
+3. Use Lucide React for icons (from lucide-react package). and you **must use existing icons** in the library,VERY IMPORTANT DO NOT IMPORT NOT EXISTING ICONS
 4. Do NOT use other UI libraries unless requested
 5. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
 6. Configure next.config.js image remotePatterns to enable stock photos from picsum.photos
@@ -26,7 +26,7 @@ const RESPONSE_PREFIX_NEXT_JS = `Use Next.js framework, Create detailed componen
 
 const RESPONSE_PREFIX_REACT = `Use React framework, Create detailed components with these requirements:
 1. Style with Tailwind CSS utility classes for responsive design
-2. Use Lucide React for icons (from lucide-react package). and you must use existing icons in the library, do not create new icons
+2. Use Lucide React for icons (from lucide-react package). and you **must use existing icons** in the library,VERY IMPORTANT DO NOT IMPORT NOT EXISTING ICONS
 3. Do NOT use other UI libraries unless requested
 4. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
 5. Create root layout.tsx page that wraps necessary navigation items to all pages
@@ -43,7 +43,7 @@ const RESPONSE_PREFIX_REACT = `Use React framework, Create detailed components w
 
 const RESPONSE_PREFIX_VUE = `Use Vue3 framework, Create detailed components with these requirements:
 1. Style with Tailwind CSS utility classes for responsive design
-2. Use Lucide Vue for icons (from lucide-vue-next package). and you must use existing icons in the library, do not create new icons
+2. Use Lucide Vue for icons (from lucide-vue-next package). and you **must use existing icons** in the library,VERY IMPORTANT DO NOT IMPORT NOT EXISTING ICONS
 3. Do NOT use other UI libraries unless requested
 4. Use stock photos from picsum.photos where appropriate, only valid URLs you know exist
 5. Create root layout.vue page that wraps necessary navigation items to all pages
@@ -228,7 +228,7 @@ for this part, you should analyze the development plan based on the image analys
 
 1. Project Structure:
 - Describe the recommended folder organization，for example:
-  - app/
+  - src/
     ├── components/ (reusable UI components)
     ├── pages/ (page-level components)
     ├── services/ (API and business logic)
@@ -734,7 +734,7 @@ AI Chat Interface with Personalized Greeting and Quick Actions Menu
 <development_planning>
 1. Project Structure:
 Assuming the project is a web application,and the Key page and component folder structure may be like this:
-app/
+src/
 ├── components/
 │   ├── layout/
 │   │   ├── Sidebar.${FILE_EXTENSION_MAP[applicationType]}
