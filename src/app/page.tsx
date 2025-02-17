@@ -26,7 +26,8 @@ export default function Home() {
   const [applicationType, setApplicationType] = useState<ApplicationFramework>("react");
   const [temperature, setTemperature] = useState(0.2);
   const [codeWithImage, setCodeWithImage] = useState(false);
-  const [promptCopiedText, copyPromptToClipboard] = useCopyToClipboard();
+  const [, copyPromptToClipboard] = useCopyToClipboard();
+  const [isCopied, setIsCopied] = useState(false);
   const promptContainerRef = useRef<HTMLDivElement>(null);
   const buildErrors = useCodeStore((state) => state.buildErrors);
   const clearBuildErrors = useCodeStore((state) => state.clearBuildErrors);
@@ -219,7 +220,14 @@ export default function Home() {
 
   const handleCopyPrompt = useCallback(async () => {
     if (!generatedPrompt) return;
-    await copyPromptToClipboard(generatedPrompt);
+    const success = await copyPromptToClipboard(generatedPrompt);
+    if (success) {
+      setIsCopied(true);
+      // 2秒后重置复制状态
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    }
   }, [generatedPrompt, copyPromptToClipboard]);
 
   // 初始化 WebContainer
@@ -310,12 +318,12 @@ export default function Home() {
                       onClick={handleCopyPrompt}
                       className="gap-2"
                     >
-                      {promptCopiedText ? (
+                      {isCopied ? (
                         <Check className="h-4 w-4" />
                       ) : (
                         <Copy className="h-4 w-4" />
                       )}
-                      {promptCopiedText ? "Copied!" : "Copy"}
+                      {isCopied ? "Copied!" : "Copy"}
                     </Button>
                   )}
                 </div>
