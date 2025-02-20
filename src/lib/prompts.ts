@@ -1051,7 +1051,7 @@ Here are some examples of correct usage of artifacts:
           export default config;
         </boltAction>
 
-        <boltAction type="file" filePath="index.html">
+        <boltAction type="file" filePath="src/main.jsx">
           import React from 'react';
           import ReactDOM from 'react-dom/client';
           import Home from '@/pages/Home';// use relative path to import the Home component
@@ -1064,15 +1064,7 @@ Here are some examples of correct usage of artifacts:
           )
         </boltAction>
 
-        <boltAction type="file" filePath="src/main.jsx">
-          ...
-        </boltAction>
-
         <boltAction type="file" filePath="src/index.css">
-          ...
-        </boltAction>
-
-        <boltAction type="file" filePath="src/App.jsx">
           ...
         </boltAction>
 
